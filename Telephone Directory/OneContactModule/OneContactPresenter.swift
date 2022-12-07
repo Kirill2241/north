@@ -7,14 +7,12 @@
 
 import Foundation
 import UIKit
-protocol OneContactPresenterProtocol: class {
-    init(view: OneContactViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol, fullName: String, phone: String, cell: String, email: String, largeImgStr: String, nat: String)
-}
 
 class OneContactPresenter: OneContactPresenterProtocol {
     weak var view: OneContactViewProtocol?
     var networkService: NetworkServiceProtocol!
     var router: RouterProtocol?
+    var largeImgStr: String?
     let countryCodes: [String: String] = [
         "AU": "61",
         "BR": "55",
@@ -42,20 +40,19 @@ class OneContactPresenter: OneContactPresenterProtocol {
         self.view = view
         self.networkService = networkService
         self.router = router
-        
+        self.largeImgStr = largeImgStr
         Task{
             await useInfo(fullName: fullName, phone: phone, cell: cell, email: email, largeImgStr: largeImgStr, nat: nat)
         }
     }
     
     func useInfo(fullName: String, phone: String, cell: String, email: String, largeImgStr: String, nat: String) async {
-        let largeImage = await downloadImage(string: largeImgStr)
         guard let countryCode = countryCodes[nat] else { return }
         let unfilteredPhone = countryCode+"-"+phone
         let unfilteredCell = countryCode+"-"+cell
         let fullPhone = unfilteredPhone.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
         let fullCell = unfilteredCell.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
-        view?.reload(fullName: fullName, phone: fullPhone, cell: fullCell, email: email, largeImage: largeImage)
+        view?.reload(fullName: fullName, phone: fullPhone, cell: fullCell, email: email)
     }
     
     func downloadImage(string: String) async -> UIImage {
@@ -73,5 +70,13 @@ class OneContactPresenter: OneContactPresenterProtocol {
             finalImg = image ?? errorImg
         }
         return finalImg ?? UIImage(named: "Error")!
+    }
+    
+    func findImage() {
+        Task{
+            let imgStr = largeImgStr ?? "https://icon-library.com/images/no-image-available-icon/no-image-available-icon-7.jpg"
+            let largeImage = await downloadImage(string: imgStr)
+            view?.setImage(image: largeImage)
+        }
     }
 }

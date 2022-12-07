@@ -8,20 +8,13 @@
 import UIKit
 import SnapKit
 import Network
-protocol ContactListViewProtocol: class, UISearchResultsUpdating {
-    func reload()
-    func noInternet()
-    
-    func requestFailure(error: Error)
-    func apiError(errorString: String)
-    func applyFilter()
-    func checkFiltering() -> Bool
-}
 
 class ContactListViewController: UIViewController, ContactListViewProtocol{
+    
     var presenter: ContactListPresenterProtocol?
     let tableView = UITableView(frame: .zero)
     let activityIndicator = UIActivityIndicatorView(style: .large)
+    let retryActivity = UIActivityIndicatorView(style: .medium)
     let searchController = UISearchController(searchResultsController: nil)
     let monitor = NWPathMonitor()
     let queue = DispatchQueue(label: "InternetConnectionMonitor")
@@ -35,6 +28,7 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
         monitor.pathUpdateHandler = { pathUpdateHandler in
                     if pathUpdateHandler.status == .satisfied {
                         print("Internet connection is on.")
+                        self.presenter?.tryRequest()
                     } else {
                         DispatchQueue.main.async {
                                 self.noInternet()
@@ -47,12 +41,16 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
     }
     
     func initialConfig() {
+        activityIndicator.hidesWhenStopped = true
         view.addSubview(activityIndicator)
         activityIndicator.snp.makeConstraints{ (maker) in
             maker.centerX.equalToSuperview()
             maker.centerY.equalToSuperview()
         }
         activityIndicator.startAnimating()
+        let retrySwipe = UISwipeGestureRecognizer(target: self, action: #selector(retryRequest(_:)))
+        retrySwipe.direction = .down
+        retrySwipe.numberOfTouchesRequired = 1
     }
     
     func configureViews(){
@@ -63,7 +61,9 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Поиск контактов"
+        navigationController?.navigationBar.barTintColor = UIColor.white
         navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
     }
     
@@ -77,6 +77,9 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
         DispatchQueue.main.async {
             if self.activityIndicator.isAnimating{
                 self.activityIndicator.stopAnimating()
+            }
+            if self.retryActivity.isAnimating{
+                self.retryActivity.stopAnimating()
             }
             self.configureViews()
             self.setUpConstraints()
@@ -115,6 +118,21 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
     }
     func checkFiltering() -> Bool{
         return searchController.isActive && !searchBarIsEmpty
+    }
+    
+    
+    @objc func retryRequest(_ sender: UISwipeGestureRecognizer){
+        /*
+        DispatchQueue.main.async {
+            self.retryActivity.hidesWhenStopped = true
+            self.view.addSubview(self.retryActivity)
+            self.retryActivity.snp.makeConstraints{ (maker) in
+                maker.centerX.equalToSuperview()
+                maker.top.equalToSuperview().offset(30)
+            }
+            self.retryActivity.startAnimating()
+        }
+        */
     }
     /*
     // MARK: - Navigation

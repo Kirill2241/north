@@ -8,11 +8,6 @@
 import Foundation
 import UIKit
 
-protocol ContactListPresenterProtocol: class, UITableViewDataSource, UITableViewDelegate {
-    init(view: ContactListViewProtocol,networkService: NetworkServiceProtocol, router: RouterProtocol)
-    func filterContacts(_ searchText: String)
-}
-
 class ContactListPresenter: NSObject, ContactListPresenterProtocol {
     weak var view: ContactListViewProtocol?
     var networkService: NetworkServiceProtocol!
@@ -25,9 +20,7 @@ class ContactListPresenter: NSObject, ContactListPresenterProtocol {
         self.networkService = networkService
         self.router = router
         super.init()
-        Task{
-            await requestContacts(str: "https://randomuser.me/api/?results=1000&inc=name,phone,cell,email,nat,picture")
-        }
+        tryRequest()
     }
     
     func requestContacts(str: String) async {
@@ -73,6 +66,12 @@ class ContactListPresenter: NSObject, ContactListPresenterProtocol {
             return contactTuple.0.name.first.lowercased().contains(searchText.lowercased()) || contactTuple.0.name.last.lowercased().contains(searchText.lowercased())
         })
         view?.applyFilter()
+    }
+    
+    func tryRequest() {
+        Task{
+            await requestContacts(str: "https://randomuser.me/api/?results=1000&inc=name,phone,cell,email,nat,picture")
+        }
     }
 }
 

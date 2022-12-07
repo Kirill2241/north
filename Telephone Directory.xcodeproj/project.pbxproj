@@ -29,11 +29,13 @@
 		EBAB578F2939174C00DCD66A /* ContactModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB578E2939174C00DCD66A /* ContactModel.swift */; };
 		EBAB57912939316900DCD66A /* HTTPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57902939316900DCD66A /* HTTPError.swift */; };
 		EBAB5793293A085700DCD66A /* OneContactPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB5792293A085700DCD66A /* OneContactPresenter.swift */; };
-		EBAB5798293CF28700DCD66A /* BottomSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB5797293CF28700DCD66A /* BottomSheetController.swift */; };
-		EBAB579A293CF2CB00DCD66A /* BottomSheetTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB5799293CF2CB00DCD66A /* BottomSheetTransitioningDelegate.swift */; };
-		EBAB579D293CF3A700DCD66A /* BottomSheetPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB579C293CF3A700DCD66A /* BottomSheetPresentationController.swift */; };
-		EBAB579F293CF71A00DCD66A /* BottomSheetInteractiveDismissalTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB579E293CF71A00DCD66A /* BottomSheetInteractiveDismissalTransition.swift */; };
-		EBAB57A1293CF79000DCD66A /* ContactPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57A0293CF79000DCD66A /* ContactPhotoViewController.swift */; };
+		EBAB57A32940858300DCD66A /* RouterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57A22940858300DCD66A /* RouterProtocol.swift */; };
+		EBAB57A5294085BD00DCD66A /* ModuleBuilderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57A4294085BD00DCD66A /* ModuleBuilderProtocol.swift */; };
+		EBAB57A7294085EF00DCD66A /* ContactListPresenterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57A6294085EF00DCD66A /* ContactListPresenterProtocol.swift */; };
+		EBAB57A92940863000DCD66A /* ContactListViewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57A82940863000DCD66A /* ContactListViewProtocol.swift */; };
+		EBAB57AD294086D100DCD66A /* OneContactPresenterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57AC294086D100DCD66A /* OneContactPresenterProtocol.swift */; };
+		EBAB57AF2940870A00DCD66A /* OneContactViewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57AE2940870A00DCD66A /* OneContactViewProtocol.swift */; };
+		EBAB57B12940A5BF00DCD66A /* CustomModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57B02940A5BF00DCD66A /* CustomModalViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,11 +88,13 @@
 		EBAB578E2939174C00DCD66A /* ContactModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactModel.swift; sourceTree = "<group>"; };
 		EBAB57902939316900DCD66A /* HTTPError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPError.swift; sourceTree = "<group>"; };
 		EBAB5792293A085700DCD66A /* OneContactPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneContactPresenter.swift; sourceTree = "<group>"; };
-		EBAB5797293CF28700DCD66A /* BottomSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetController.swift; sourceTree = "<group>"; };
-		EBAB5799293CF2CB00DCD66A /* BottomSheetTransitioningDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetTransitioningDelegate.swift; sourceTree = "<group>"; };
-		EBAB579C293CF3A700DCD66A /* BottomSheetPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetPresentationController.swift; sourceTree = "<group>"; };
-		EBAB579E293CF71A00DCD66A /* BottomSheetInteractiveDismissalTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetInteractiveDismissalTransition.swift; sourceTree = "<group>"; };
-		EBAB57A0293CF79000DCD66A /* ContactPhotoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactPhotoViewController.swift; sourceTree = "<group>"; };
+		EBAB57A22940858300DCD66A /* RouterProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterProtocol.swift; sourceTree = "<group>"; };
+		EBAB57A4294085BD00DCD66A /* ModuleBuilderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleBuilderProtocol.swift; sourceTree = "<group>"; };
+		EBAB57A6294085EF00DCD66A /* ContactListPresenterProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListPresenterProtocol.swift; sourceTree = "<group>"; };
+		EBAB57A82940863000DCD66A /* ContactListViewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListViewProtocol.swift; sourceTree = "<group>"; };
+		EBAB57AC294086D100DCD66A /* OneContactPresenterProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneContactPresenterProtocol.swift; sourceTree = "<group>"; };
+		EBAB57AE2940870A00DCD66A /* OneContactViewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneContactViewProtocol.swift; sourceTree = "<group>"; };
+		EBAB57B02940A5BF00DCD66A /* CustomModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomModalViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,10 +167,10 @@
 				EBAB574F2937D63A00DCD66A /* SceneDelegate.swift */,
 				EBAB57872937DECD00DCD66A /* ContactListModule */,
 				EBAB57882937DEE100DCD66A /* ServiceLayer */,
-				EBAB577D2937D70900DCD66A /* ModuleBuilder.swift */,
+				EBAB57AA2940867600DCD66A /* ModuleBuilder */,
 				EBAB5794293A0D3400DCD66A /* OneContactModule */,
 				EBAB57902939316900DCD66A /* HTTPError.swift */,
-				EBAB577F2937D77C00DCD66A /* Router.swift */,
+				EBAB57AB2940868300DCD66A /* Router */,
 				EBAB57532937D63A00DCD66A /* Main.storyboard */,
 				EBAB57562937D63B00DCD66A /* Assets.xcassets */,
 				EBAB57582937D63B00DCD66A /* LaunchScreen.storyboard */,
@@ -197,8 +201,10 @@
 			isa = PBXGroup;
 			children = (
 				EBAB57812937D8C300DCD66A /* ContactListPresenter.swift */,
+				EBAB57A6294085EF00DCD66A /* ContactListPresenterProtocol.swift */,
 				EBAB578E2939174C00DCD66A /* ContactModel.swift */,
 				EBAB57852937D98200DCD66A /* ContactListViewController.swift */,
+				EBAB57A82940863000DCD66A /* ContactListViewProtocol.swift */,
 				EBAB57892937E09B00DCD66A /* ContactTableViewCell.swift */,
 			);
 			path = ContactListModule;
@@ -216,7 +222,9 @@
 			isa = PBXGroup;
 			children = (
 				EBAB5792293A085700DCD66A /* OneContactPresenter.swift */,
+				EBAB57AC294086D100DCD66A /* OneContactPresenterProtocol.swift */,
 				EBAB57512937D63A00DCD66A /* OneContactViewController.swift */,
+				EBAB57AE2940870A00DCD66A /* OneContactViewProtocol.swift */,
 				EBAB579B293CF2E500DCD66A /* BottomSheet */,
 			);
 			path = OneContactModule;
@@ -225,13 +233,27 @@
 		EBAB579B293CF2E500DCD66A /* BottomSheet */ = {
 			isa = PBXGroup;
 			children = (
-				EBAB5797293CF28700DCD66A /* BottomSheetController.swift */,
-				EBAB57A0293CF79000DCD66A /* ContactPhotoViewController.swift */,
-				EBAB5799293CF2CB00DCD66A /* BottomSheetTransitioningDelegate.swift */,
-				EBAB579E293CF71A00DCD66A /* BottomSheetInteractiveDismissalTransition.swift */,
-				EBAB579C293CF3A700DCD66A /* BottomSheetPresentationController.swift */,
+				EBAB57B02940A5BF00DCD66A /* CustomModalViewController.swift */,
 			);
 			path = BottomSheet;
+			sourceTree = "<group>";
+		};
+		EBAB57AA2940867600DCD66A /* ModuleBuilder */ = {
+			isa = PBXGroup;
+			children = (
+				EBAB577D2937D70900DCD66A /* ModuleBuilder.swift */,
+				EBAB57A4294085BD00DCD66A /* ModuleBuilderProtocol.swift */,
+			);
+			path = ModuleBuilder;
+			sourceTree = "<group>";
+		};
+		EBAB57AB2940868300DCD66A /* Router */ = {
+			isa = PBXGroup;
+			children = (
+				EBAB577F2937D77C00DCD66A /* Router.swift */,
+				EBAB57A22940858300DCD66A /* RouterProtocol.swift */,
+			);
+			path = Router;
 			sourceTree = "<group>";
 		};
 		FACEA52EBA8A60032439E6F1 /* Frameworks */ = {
@@ -483,22 +505,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EBAB579D293CF3A700DCD66A /* BottomSheetPresentationController.swift in Sources */,
-				EBAB579F293CF71A00DCD66A /* BottomSheetInteractiveDismissalTransition.swift in Sources */,
+				EBAB57A92940863000DCD66A /* ContactListViewProtocol.swift in Sources */,
 				EBAB578D2939160600DCD66A /* TelephoneDirectory.xcdatamodeld in Sources */,
 				EBAB57522937D63A00DCD66A /* OneContactViewController.swift in Sources */,
 				EBAB57862937D98200DCD66A /* ContactListViewController.swift in Sources */,
 				EBAB574E2937D63A00DCD66A /* AppDelegate.swift in Sources */,
 				EBAB57912939316900DCD66A /* HTTPError.swift in Sources */,
+				EBAB57A32940858300DCD66A /* RouterProtocol.swift in Sources */,
 				EBAB57802937D77C00DCD66A /* Router.swift in Sources */,
-				EBAB5798293CF28700DCD66A /* BottomSheetController.swift in Sources */,
-				EBAB579A293CF2CB00DCD66A /* BottomSheetTransitioningDelegate.swift in Sources */,
+				EBAB57AF2940870A00DCD66A /* OneContactViewProtocol.swift in Sources */,
+				EBAB57A7294085EF00DCD66A /* ContactListPresenterProtocol.swift in Sources */,
 				EBAB57502937D63A00DCD66A /* SceneDelegate.swift in Sources */,
 				EBAB5793293A085700DCD66A /* OneContactPresenter.swift in Sources */,
+				EBAB57A5294085BD00DCD66A /* ModuleBuilderProtocol.swift in Sources */,
 				EBAB577E2937D70900DCD66A /* ModuleBuilder.swift in Sources */,
+				EBAB57B12940A5BF00DCD66A /* CustomModalViewController.swift in Sources */,
 				EBAB578A2937E09B00DCD66A /* ContactTableViewCell.swift in Sources */,
-				EBAB57A1293CF79000DCD66A /* ContactPhotoViewController.swift in Sources */,
 				EBAB57822937D8C300DCD66A /* ContactListPresenter.swift in Sources */,
+				EBAB57AD294086D100DCD66A /* OneContactPresenterProtocol.swift in Sources */,
 				EBAB57842937D91B00DCD66A /* NetworkService.swift in Sources */,
 				EBAB578F2939174C00DCD66A /* ContactModel.swift in Sources */,
 			);
