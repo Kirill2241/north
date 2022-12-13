@@ -14,7 +14,6 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
     var presenter: ContactListPresenterProtocol?
     let tableView = UITableView(frame: .zero)
     let activityIndicator = UIActivityIndicatorView(style: .large)
-    let retryActivity = UIActivityIndicatorView(style: .medium)
     let searchController = UISearchController(searchResultsController: nil)
     let monitor = NWPathMonitor()
     let queue = DispatchQueue(label: "InternetConnectionMonitor")
@@ -48,9 +47,6 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
             maker.centerY.equalToSuperview()
         }
         activityIndicator.startAnimating()
-        let retrySwipe = UISwipeGestureRecognizer(target: self, action: #selector(retryRequest(_:)))
-        retrySwipe.direction = .down
-        retrySwipe.numberOfTouchesRequired = 1
     }
     
     func configureViews(){
@@ -59,9 +55,11 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
         tableView.delegate = presenter
         view.addSubview(tableView)
         searchController.searchResultsUpdater = self
-        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.obscuresBackgroundDuringPresentation = true
         searchController.searchBar.placeholder = "Поиск контактов"
         navigationController?.navigationBar.barTintColor = UIColor.white
+        navigationController?.navigationBar.backgroundColor = UIColor.white
+        navigationController?.navigationBar.isTranslucent = false
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
@@ -77,9 +75,6 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
         DispatchQueue.main.async {
             if self.activityIndicator.isAnimating{
                 self.activityIndicator.stopAnimating()
-            }
-            if self.retryActivity.isAnimating{
-                self.retryActivity.stopAnimating()
             }
             self.configureViews()
             self.setUpConstraints()
@@ -120,19 +115,23 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
         return searchController.isActive && !searchBarIsEmpty
     }
     
-    
-    @objc func retryRequest(_ sender: UISwipeGestureRecognizer){
-        /*
+    func nothingFound() {
         DispatchQueue.main.async {
-            self.retryActivity.hidesWhenStopped = true
-            self.view.addSubview(self.retryActivity)
-            self.retryActivity.snp.makeConstraints{ (maker) in
-                maker.centerX.equalToSuperview()
-                maker.top.equalToSuperview().offset(30)
+            let nothingFoundLabel : UILabel = {
+                let lbl = UILabel()
+                lbl.font = UIFont.systemFont(ofSize: 24)
+                lbl.textColor = UIColor.darkGray
+                lbl.numberOfLines = 0
+                lbl.lineBreakMode = .byWordWrapping
+                lbl.text = "По Вашему запросу ничего не найдено"
+                return lbl
+            }()
+            self.view.addSubview(nothingFoundLabel)
+            nothingFoundLabel.snp.makeConstraints{ (maker) in
+                maker.centerX.centerY.equalToSuperview()
+                maker.height.equalTo(30)
             }
-            self.retryActivity.startAnimating()
         }
-        */
     }
     /*
     // MARK: - Navigation

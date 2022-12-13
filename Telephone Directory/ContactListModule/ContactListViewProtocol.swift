@@ -13,4 +13,5 @@ protocol ContactListViewProtocol: class, UISearchResultsUpdating {
     func apiError(errorString: String)
     func applyFilter()
     func checkFiltering() -> Bool
+    func nothingFound()
 }

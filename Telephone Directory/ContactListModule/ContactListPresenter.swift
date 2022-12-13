@@ -78,6 +78,9 @@ class ContactListPresenter: NSObject, ContactListPresenterProtocol {
 extension ContactListPresenter: UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if view!.checkFiltering(){
+            if filteredContacts.count == 0{
+                view?.nothingFound()
+            }
             return filteredContacts.count
         }
         return allContacts.count

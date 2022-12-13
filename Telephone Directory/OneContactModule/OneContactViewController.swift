@@ -81,7 +81,7 @@ class OneContactViewController: UIViewController, OneContactViewProtocol {
     var labelsStack : UIStackView?
     var phoneButtonsStack: UIStackView?
     var cellButtonsStack: UIStackView?
-    var buttonsVerticalStack: UIStackView?
+    var verticalStack: UIStackView?
     var phone: String?
     var cell: String?
     override func viewDidLoad() {
@@ -114,13 +114,6 @@ class OneContactViewController: UIViewController, OneContactViewProtocol {
         
         self.phone = phone
         self.cell = cell
-        
-        view.addSubview(fullNameLabel)
-        labelsStack = UIStackView(arrangedSubviews: [phoneLabel, cellPhoneLabel])
-        labelsStack?.axis = .vertical
-        labelsStack?.alignment = .fill
-        labelsStack?.distribution = .fillEqually
-        labelsStack?.spacing = 20
         callButton.addTarget(self, action: #selector(callNumber(_:)), for: .touchUpInside)
         callCellButton.addTarget(self, action: #selector(callCell(_:)), for: .touchUpInside)
         sendSMSButton.addTarget(self, action: #selector(sendSMS(_:)), for: .touchUpInside)
@@ -129,47 +122,26 @@ class OneContactViewController: UIViewController, OneContactViewProtocol {
         phoneButtonsStack?.axis = .horizontal
         phoneButtonsStack?.alignment = .fill
         phoneButtonsStack?.distribution = .fillEqually
-        phoneButtonsStack?.spacing = 20
+        phoneButtonsStack?.spacing = 40
         cellButtonsStack = UIStackView(arrangedSubviews: [callCellButton, sendCellSMSButton])
         cellButtonsStack?.axis = .horizontal
         cellButtonsStack?.alignment = .fill
         cellButtonsStack?.distribution = .fillEqually
         cellButtonsStack?.spacing = 20
-        buttonsVerticalStack = UIStackView(arrangedSubviews: [phoneButtonsStack!, cellButtonsStack!])
-        buttonsVerticalStack?.axis = .vertical
-        buttonsVerticalStack?.distribution = .fillEqually
-        buttonsVerticalStack?.alignment = .fill
-        buttonsVerticalStack?.spacing = 15
-        view.addSubview(labelsStack!)
-        view.addSubview(buttonsVerticalStack!)
-        view.addSubview(emailLabel)
+        verticalStack = UIStackView(arrangedSubviews: [fullNameLabel, phoneLabel,phoneButtonsStack!, cellPhoneLabel, cellButtonsStack!, emailLabel])
+        verticalStack?.axis = .vertical
+        verticalStack?.distribution = .fillEqually
+        verticalStack?.alignment = .fill
+        verticalStack?.spacing = 15
+        view.addSubview(verticalStack!)
     }
     
     func setUpConstraints() {
-        fullNameLabel.snp.makeConstraints{ (maker) in
-            let fullNameOffset = view.frame.height*0.3+15+70
-            maker.top.equalTo(fullNameOffset)
+        verticalStack!.snp.makeConstraints{ (maker) in
+            maker.top.equalToSuperview().offset(65+view.frame.height*0.3)
             maker.leading.equalToSuperview().offset(20)
             maker.trailing.equalToSuperview().inset(20)
-            maker.height.equalTo(27)
-        }
-        labelsStack!.snp.makeConstraints{ (maker) in
-            maker.top.equalTo(fullNameLabel.snp.bottom).offset(15)
-            maker.leading.equalToSuperview().offset(20)
-            maker.width.equalToSuperview().multipliedBy(0.7)
-            maker.height.equalTo(75)
-        }
-        buttonsVerticalStack!.snp.makeConstraints{ (maker) in
-            maker.top.equalTo(fullNameLabel.snp.bottom).offset(15)
-            maker.trailing.equalToSuperview().inset(20)
-            maker.width.equalTo(80)
-            maker.height.equalTo(75)
-        }
-        emailLabel.snp.makeConstraints{ (maker) in
-            maker.top.equalTo(labelsStack!.snp.bottom).offset(20)
-            maker.leading.equalToSuperview().offset(20)
-            maker.trailing.equalToSuperview().inset(20)
-            maker.height.equalTo(20)
+            maker.height.equalTo(197)
         }
     }
     
@@ -182,12 +154,13 @@ class OneContactViewController: UIViewController, OneContactViewProtocol {
     
     func setImage(image: UIImage){
         DispatchQueue.main.async {
+            self.largeImageView.removeFromSuperview()
             self.largeImageView.image = image
             let imageGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.enlargeImage(_:)))
             self.largeImageView.addGestureRecognizer(imageGestureRecognizer)
             self.view.addSubview(self.largeImageView)
             self.largeImageView.snp.makeConstraints{ (maker) in
-                maker.top.equalToSuperview().offset(70)
+                maker.top.equalTo(self.navigationController?.navigationBar.snp.bottom as! ConstraintRelatableTarget).offset(20)
                 maker.leading.trailing.equalToSuperview()
                 maker.height.equalToSuperview().multipliedBy(0.3)
             }
@@ -243,6 +216,18 @@ class OneContactViewController: UIViewController, OneContactViewProtocol {
             let alert = UIAlertController(title: "Не удалось загрузить изображение", message: "Чтобы загрузить изображение, необходимо подключение к Интернету.", preferredStyle: UIAlertController.Style.alert)
             alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
             self.present(alert, animated: true, completion: nil)
+            self.largeImageView.image = UIImage(systemName: "camera.fill")
+            self.view.addSubview(self.largeImageView)
+            self.largeImageView.snp.makeConstraints{ (maker) in
+                maker.top.equalTo(self.navigationController?.navigationBar.snp.bottom as! ConstraintRelatableTarget).offset(20)
+                maker.leading.trailing.equalToSuperview()
+                maker.height.equalToSuperview().multipliedBy(0.3)
+            }
+            let pictureLoadingIndicator = UIActivityIndicatorView(style: .medium)
+            self.largeImageView.addSubview(pictureLoadingIndicator)
+            pictureLoadingIndicator.snp.makeConstraints{ (maker) in
+                maker.centerX.centerY.equalToSuperview()
+            }
         }
     }
 }
