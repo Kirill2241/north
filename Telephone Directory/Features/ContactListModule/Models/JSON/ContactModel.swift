@@ -11,7 +11,6 @@ struct ContactModel: Codable {
 }
 
 struct ContactInstance: Codable{
-    
     var name: NameModel
     var email: String
     var phone: String

@@ -23,42 +23,39 @@ class ContactListPresenter: NSObject, ContactListPresenterProtocol {
         tryRequest()
     }
     
-    func requestContacts(str: String) async {
-        let result = await try! self.networkService.requestContactList(urlString: str)
-        if case .failure(let error) = result {
-            if error.localizedDescription == "The operation couldn’t be completed. (MoscowEvents.HTTPError error 0.)" {
-                self.view?.noInternet()
-            } else{
-                self.view?.requestFailure(error: error)
-            }
-        }
-        if case .success(let requestResp) = result{
-            guard let contacts = requestResp else { return }
-                guard let results = contacts.results else { return }
-                for item in results{
-                    let image = await downloadImage(string: item.picture.thumbnail)
-                    let contactTuple = (item, image)
-                    allContacts.append(contactTuple)
+    func requestContacts(numberOfContacts: Int, fields: [String]) async {
+        let networkData = await networkService.processContactListRequest(numberOfContacts, fields: fields)
+        switch networkData.status {
+        case .error:
+            view?.setRequestFailureView()
+        case .success:
+            if networkData.result?.error != nil {
+                view?.setAPIErrorView(errorString: (networkData.result?.error!)!)
+            }else{
+                for instance in networkData.result?.results ?? []{
+                    let image = await requestImage(string: instance.picture.thumbnail)
+                    let tuple = (instance, image)
+                    allContacts.append(tuple)
                 }
-                self.view?.reload()
+                view?.setContentView()
+            }
+        case .none:
+            print("")
         }
     }
     
-    func downloadImage(string: String) async -> UIImage {
-        var finalImg: UIImage?
+    func requestImage(string: String) async -> UIImage {
         guard let imageUrlString = string as? String else {
             return UIImage(named: "Error")!}
-        let result = await self.networkService.requestImage(from: imageUrlString)
-        if case .failure(let error) = result {
-            guard let errorImg = UIImage(named: "Error") else { return UIImage(named: "Error")!}
-            finalImg = errorImg
+        let result = await networkService.requestImage(urlString: imageUrlString)
+        switch result.status {
+        case .success:
+            return UIImage(data: result.data!)!
+        case .error:
+            return UIImage(named: "Error")!
+        case .noConnection:
+            return UIImage(named: "Error")!
         }
-        if case .success(let data) = result{
-            let image = UIImage(data: data!)
-            let errorImg = UIImage(named: "Error")!
-            finalImg = image ?? errorImg
-        }
-        return finalImg ?? UIImage(named: "Error")!
     }
     
     func filterContacts(_ searchText: String){
@@ -70,7 +67,7 @@ class ContactListPresenter: NSObject, ContactListPresenterProtocol {
     
     func tryRequest() {
         Task{
-            await requestContacts(str: "https://randomuser.me/api/?results=1000&inc=name,phone,cell,email,nat,picture")
+            await requestContacts(numberOfContacts: 1000, fields: ["name" ,"phone","cell","email","nat","picture"])
         }
     }
 }
@@ -81,8 +78,10 @@ extension ContactListPresenter: UITableViewDataSource{
             if filteredContacts.count == 0{
                 view?.nothingFound()
             }
+            view?.removeNothingFoundLabel()
             return filteredContacts.count
         }
+        view?.removeNothingFoundLabel()
         return allContacts.count
     }
     

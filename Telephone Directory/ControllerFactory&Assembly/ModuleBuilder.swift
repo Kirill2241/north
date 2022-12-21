@@ -17,7 +17,7 @@ class ModuleBuilder: ModuleBuilderProtocol {
         return view
     }
     func buildOneContact(router: RouterProtocol, fullName: String, phone: String, cell: String, email: String, largeImgStr: String, nat: String) -> UIViewController{
-        let view = OneContactViewController()
+        let view = OneContactViewController(nibName: "OneContactVC", bundle: nil)
         let networkService = NetworkService()
         let presenter = OneContactPresenter(view: view, networkService: networkService, router: router, fullName: fullName, phone: phone, cell: cell, email: email, largeImgStr: largeImgStr, nat: nat)
         view.presenter = presenter

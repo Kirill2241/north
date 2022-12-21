@@ -10,6 +10,9 @@
 		343C314A0A171AB831F5703A /* Pods_Telephone_DirectoryTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7BA1282F69DD605F825FFA9 /* Pods_Telephone_DirectoryTests.framework */; };
 		5A60C8869DAD2AD1FDFE9D7A /* Pods_Telephone_Directory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8853C93A0DA7F3D531C75643 /* Pods_Telephone_Directory.framework */; };
 		88A0AA85FF06E6717E611FAB /* Pods_Telephone_Directory_Telephone_DirectoryUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 976D76945A582FC3581F361A /* Pods_Telephone_Directory_Telephone_DirectoryUITests.framework */; };
+		EB5AF7232950AF5A00AE4298 /* NetworkServiceCustomData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5AF7222950AF5A00AE4298 /* NetworkServiceCustomData.swift */; };
+		EB5AF7252950C4EE00AE4298 /* NetworkServiceImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5AF7242950C4EE00AE4298 /* NetworkServiceImageData.swift */; };
+		EB5AF7272950E35600AE4298 /* OneContactVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB5AF7262950E35600AE4298 /* OneContactVC.xib */; };
 		EBAB574E2937D63A00DCD66A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB574D2937D63A00DCD66A /* AppDelegate.swift */; };
 		EBAB57502937D63A00DCD66A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB574F2937D63A00DCD66A /* SceneDelegate.swift */; };
 		EBAB57522937D63A00DCD66A /* OneContactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57512937D63A00DCD66A /* OneContactViewController.swift */; };
@@ -65,6 +68,9 @@
 		97A7ADD18EAA789274C8ADF0 /* Pods-Telephone Directory.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telephone Directory.debug.xcconfig"; path = "Target Support Files/Pods-Telephone Directory/Pods-Telephone Directory.debug.xcconfig"; sourceTree = "<group>"; };
 		C7BA1282F69DD605F825FFA9 /* Pods_Telephone_DirectoryTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Telephone_DirectoryTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E252C1A0A54335DEDF11D1C6 /* Pods-Telephone DirectoryTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telephone DirectoryTests.debug.xcconfig"; path = "Target Support Files/Pods-Telephone DirectoryTests/Pods-Telephone DirectoryTests.debug.xcconfig"; sourceTree = "<group>"; };
+		EB5AF7222950AF5A00AE4298 /* NetworkServiceCustomData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceCustomData.swift; sourceTree = "<group>"; };
+		EB5AF7242950C4EE00AE4298 /* NetworkServiceImageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceImageData.swift; sourceTree = "<group>"; };
+		EB5AF7262950E35600AE4298 /* OneContactVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OneContactVC.xib; sourceTree = "<group>"; };
 		EBAB574A2937D63A00DCD66A /* Telephone Directory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Telephone Directory.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EBAB574D2937D63A00DCD66A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EBAB574F2937D63A00DCD66A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -138,6 +144,119 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		EB5AF7142950A3D500AE4298 /* AppConstants */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = AppConstants;
+			sourceTree = "<group>";
+		};
+		EB5AF7152950A3F300AE4298 /* NavigationLayer */ = {
+			isa = PBXGroup;
+			children = (
+				EBAB57AB2940868300DCD66A /* Router */,
+			);
+			path = NavigationLayer;
+			sourceTree = "<group>";
+		};
+		EB5AF7172950A51B00AE4298 /* ApplicationCore */ = {
+			isa = PBXGroup;
+			children = (
+				EB5AF7212950A6FA00AE4298 /* UIElements */,
+				EB5AF7182950A57500AE4298 /* Helpers&Extensions */,
+				EB5AF7142950A3D500AE4298 /* AppConstants */,
+			);
+			path = ApplicationCore;
+			sourceTree = "<group>";
+		};
+		EB5AF7182950A57500AE4298 /* Helpers&Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				EBAB57902939316900DCD66A /* HTTPError.swift */,
+			);
+			path = "Helpers&Extensions";
+			sourceTree = "<group>";
+		};
+		EB5AF7192950A5B900AE4298 /* ControllerFactory&Assembly */ = {
+			isa = PBXGroup;
+			children = (
+				EBAB577D2937D70900DCD66A /* ModuleBuilder.swift */,
+				EBAB57A4294085BD00DCD66A /* ModuleBuilderProtocol.swift */,
+			);
+			path = "ControllerFactory&Assembly";
+			sourceTree = "<group>";
+		};
+		EB5AF71A2950A61500AE4298 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				EBAB5794293A0D3400DCD66A /* OneContactModule */,
+				EBAB57872937DECD00DCD66A /* ContactListModule */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		EB5AF71B2950A64E00AE4298 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				EB5AF71C2950A65E00AE4298 /* JSON */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		EB5AF71C2950A65E00AE4298 /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				EBAB578E2939174C00DCD66A /* ContactModel.swift */,
+			);
+			path = JSON;
+			sourceTree = "<group>";
+		};
+		EB5AF71D2950A67000AE4298 /* DataProviding */ = {
+			isa = PBXGroup;
+			children = (
+				EBAB57812937D8C300DCD66A /* ContactListPresenter.swift */,
+				EBAB57A6294085EF00DCD66A /* ContactListPresenterProtocol.swift */,
+			);
+			path = DataProviding;
+			sourceTree = "<group>";
+		};
+		EB5AF71E2950A69600AE4298 /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				EBAB57852937D98200DCD66A /* ContactListViewController.swift */,
+				EBAB57A82940863000DCD66A /* ContactListViewProtocol.swift */,
+				EBAB57892937E09B00DCD66A /* ContactTableViewCell.swift */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		EB5AF71F2950A6BC00AE4298 /* DataProviding */ = {
+			isa = PBXGroup;
+			children = (
+				EBAB5792293A085700DCD66A /* OneContactPresenter.swift */,
+				EBAB57AC294086D100DCD66A /* OneContactPresenterProtocol.swift */,
+			);
+			path = DataProviding;
+			sourceTree = "<group>";
+		};
+		EB5AF7202950A6D100AE4298 /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				EBAB57AE2940870A00DCD66A /* OneContactViewProtocol.swift */,
+				EBAB57512937D63A00DCD66A /* OneContactViewController.swift */,
+				EB5AF7262950E35600AE4298 /* OneContactVC.xib */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		EB5AF7212950A6FA00AE4298 /* UIElements */ = {
+			isa = PBXGroup;
+			children = (
+				EBAB579B293CF2E500DCD66A /* BottomSheet */,
+			);
+			path = UIElements;
+			sourceTree = "<group>";
+		};
 		EBAB57412937D63A00DCD66A = {
 			isa = PBXGroup;
 			children = (
@@ -165,12 +284,11 @@
 			children = (
 				EBAB574D2937D63A00DCD66A /* AppDelegate.swift */,
 				EBAB574F2937D63A00DCD66A /* SceneDelegate.swift */,
-				EBAB57872937DECD00DCD66A /* ContactListModule */,
-				EBAB57882937DEE100DCD66A /* ServiceLayer */,
-				EBAB57AA2940867600DCD66A /* ModuleBuilder */,
-				EBAB5794293A0D3400DCD66A /* OneContactModule */,
-				EBAB57902939316900DCD66A /* HTTPError.swift */,
-				EBAB57AB2940868300DCD66A /* Router */,
+				EB5AF7172950A51B00AE4298 /* ApplicationCore */,
+				EB5AF7192950A5B900AE4298 /* ControllerFactory&Assembly */,
+				EB5AF71A2950A61500AE4298 /* Features */,
+				EB5AF7152950A3F300AE4298 /* NavigationLayer */,
+				EBAB57882937DEE100DCD66A /* NetworkLayer */,
 				EBAB57532937D63A00DCD66A /* Main.storyboard */,
 				EBAB57562937D63B00DCD66A /* Assets.xcassets */,
 				EBAB57582937D63B00DCD66A /* LaunchScreen.storyboard */,
@@ -200,32 +318,28 @@
 		EBAB57872937DECD00DCD66A /* ContactListModule */ = {
 			isa = PBXGroup;
 			children = (
-				EBAB57812937D8C300DCD66A /* ContactListPresenter.swift */,
-				EBAB57A6294085EF00DCD66A /* ContactListPresenterProtocol.swift */,
-				EBAB578E2939174C00DCD66A /* ContactModel.swift */,
-				EBAB57852937D98200DCD66A /* ContactListViewController.swift */,
-				EBAB57A82940863000DCD66A /* ContactListViewProtocol.swift */,
-				EBAB57892937E09B00DCD66A /* ContactTableViewCell.swift */,
+				EB5AF71E2950A69600AE4298 /* Presentation */,
+				EB5AF71D2950A67000AE4298 /* DataProviding */,
+				EB5AF71B2950A64E00AE4298 /* Models */,
 			);
 			path = ContactListModule;
 			sourceTree = "<group>";
 		};
-		EBAB57882937DEE100DCD66A /* ServiceLayer */ = {
+		EBAB57882937DEE100DCD66A /* NetworkLayer */ = {
 			isa = PBXGroup;
 			children = (
 				EBAB57832937D91B00DCD66A /* NetworkService.swift */,
+				EB5AF7222950AF5A00AE4298 /* NetworkServiceCustomData.swift */,
+				EB5AF7242950C4EE00AE4298 /* NetworkServiceImageData.swift */,
 			);
-			path = ServiceLayer;
+			path = NetworkLayer;
 			sourceTree = "<group>";
 		};
 		EBAB5794293A0D3400DCD66A /* OneContactModule */ = {
 			isa = PBXGroup;
 			children = (
-				EBAB5792293A085700DCD66A /* OneContactPresenter.swift */,
-				EBAB57AC294086D100DCD66A /* OneContactPresenterProtocol.swift */,
-				EBAB57512937D63A00DCD66A /* OneContactViewController.swift */,
-				EBAB57AE2940870A00DCD66A /* OneContactViewProtocol.swift */,
-				EBAB579B293CF2E500DCD66A /* BottomSheet */,
+				EB5AF7202950A6D100AE4298 /* Presentation */,
+				EB5AF71F2950A6BC00AE4298 /* DataProviding */,
 			);
 			path = OneContactModule;
 			sourceTree = "<group>";
@@ -236,15 +350,6 @@
 				EBAB57B02940A5BF00DCD66A /* CustomModalViewController.swift */,
 			);
 			path = BottomSheet;
-			sourceTree = "<group>";
-		};
-		EBAB57AA2940867600DCD66A /* ModuleBuilder */ = {
-			isa = PBXGroup;
-			children = (
-				EBAB577D2937D70900DCD66A /* ModuleBuilder.swift */,
-				EBAB57A4294085BD00DCD66A /* ModuleBuilderProtocol.swift */,
-			);
-			path = ModuleBuilder;
 			sourceTree = "<group>";
 		};
 		EBAB57AB2940868300DCD66A /* Router */ = {
@@ -375,6 +480,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB5AF7272950E35600AE4298 /* OneContactVC.xib in Resources */,
 				EBAB575A2937D63B00DCD66A /* LaunchScreen.storyboard in Resources */,
 				EBAB57572937D63B00DCD66A /* Assets.xcassets in Resources */,
 				EBAB57552937D63A00DCD66A /* Main.storyboard in Resources */,
@@ -513,6 +619,7 @@
 				EBAB57912939316900DCD66A /* HTTPError.swift in Sources */,
 				EBAB57A32940858300DCD66A /* RouterProtocol.swift in Sources */,
 				EBAB57802937D77C00DCD66A /* Router.swift in Sources */,
+				EB5AF7252950C4EE00AE4298 /* NetworkServiceImageData.swift in Sources */,
 				EBAB57AF2940870A00DCD66A /* OneContactViewProtocol.swift in Sources */,
 				EBAB57A7294085EF00DCD66A /* ContactListPresenterProtocol.swift in Sources */,
 				EBAB57502937D63A00DCD66A /* SceneDelegate.swift in Sources */,
@@ -522,6 +629,7 @@
 				EBAB57B12940A5BF00DCD66A /* CustomModalViewController.swift in Sources */,
 				EBAB578A2937E09B00DCD66A /* ContactTableViewCell.swift in Sources */,
 				EBAB57822937D8C300DCD66A /* ContactListPresenter.swift in Sources */,
+				EB5AF7232950AF5A00AE4298 /* NetworkServiceCustomData.swift in Sources */,
 				EBAB57AD294086D100DCD66A /* OneContactPresenterProtocol.swift in Sources */,
 				EBAB57842937D91B00DCD66A /* NetworkService.swift in Sources */,
 				EBAB578F2939174C00DCD66A /* ContactModel.swift in Sources */,
@@ -630,7 +738,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -684,7 +792,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;

@@ -53,29 +53,28 @@ class OneContactPresenter: OneContactPresenterProtocol {
         let fullPhone = unfilteredPhone.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
         let fullCell = unfilteredCell.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
         view?.reload(fullName: fullName, phone: fullPhone, cell: fullCell, email: email)
+        let image = await requestImage(string: largeImgStr)
+        view?.setImage(image: image)
     }
     
-    func downloadImage(string: String) async -> UIImage {
-        var finalImg: UIImage?
+    func requestImage(string: String) async -> UIImage {
         guard let imageUrlString = string as? String else {
             return UIImage(named: "Error")!}
-        let result = await self.networkService.requestImage(from: imageUrlString)
-        if case .failure(let error) = result {
-            guard let errorImg = UIImage(named: "Error") else { return UIImage(named: "Error")!}
-            finalImg = errorImg
+        let result = await self.networkService.requestImage(urlString: imageUrlString)
+        switch result.status {
+        case .success:
+            return UIImage(data: result.data!)!
+        case .error:
+            return UIImage(named: "Error")!
+        case .noConnection:
+            return UIImage(named: "Error")!
         }
-        if case .success(let data) = result{
-            let image = UIImage(data: data!)
-            let errorImg = UIImage(named: "Error")!
-            finalImg = image ?? errorImg
-        }
-        return finalImg ?? UIImage(named: "Error")!
     }
     
     func findImage() {
         Task{
             let imgStr = largeImgStr ?? "https://icon-library.com/images/no-image-available-icon/no-image-available-icon-7.jpg"
-            let largeImage = await downloadImage(string: imgStr)
+            let largeImage = await requestImage(string: imgStr)
             view?.setImage(image: largeImage)
         }
     }

@@ -7,11 +7,11 @@
 import UIKit
 
 protocol ContactListViewProtocol: class, UISearchResultsUpdating {
-    func reload()
-    func noInternet()
-    func requestFailure(error: Error)
-    func apiError(errorString: String)
+    func setContentView()
+    func setRequestFailureView()
+    func setAPIErrorView(errorString: String)
     func applyFilter()
     func checkFiltering() -> Bool
     func nothingFound()
+    func removeNothingFoundLabel()
 }
