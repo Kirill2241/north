@@ -66,7 +66,7 @@ class NetworkService: NetworkServiceProtocol {
         case .success(let data):
             return NetworkServiceImageData(status: .success, data: data)
         case .none:
-            return NetworkServiceImageData(status: .noConnection)
+            return NetworkServiceImageData(status: .error)
         }
     }
     

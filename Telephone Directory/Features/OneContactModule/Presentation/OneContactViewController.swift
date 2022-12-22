@@ -22,9 +22,13 @@ class OneContactViewController: UIViewController, OneContactViewProtocol {
     @IBOutlet weak var cellLabel: UILabel!
     @IBOutlet weak var mailLabel: UILabel!
     
+    @IBOutlet weak var loadingImageActivityIndicator: UIActivityIndicatorView!
+    
     func reload(fullName: String, phone: String, cell: String, email: String) {
         DispatchQueue.main.async {
             self.contactImageView.image = UIImage(named: "Error")
+            self.loadingImageActivityIndicator.hidesWhenStopped = true
+            self.loadingImageActivityIndicator.startAnimating()
             self.fullNameLabel.text = fullName
             self.phone = phone
             self.phoneLabel.text = "Телефон: "+phone
@@ -70,6 +74,9 @@ class OneContactViewController: UIViewController, OneContactViewProtocol {
     
     func setImage(image: UIImage) {
         DispatchQueue.main.async {
+            if self.loadingImageActivityIndicator.isAnimating{
+                self.loadingImageActivityIndicator.stopAnimating()
+            }
             self.contactImageView.image = image
             let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.enlargeImage(_:)))
             tapGestureRecognizer.numberOfTouchesRequired = 1
@@ -85,6 +92,17 @@ class OneContactViewController: UIViewController, OneContactViewProtocol {
             vc.addImage(image: image)
             vc.modalPresentationStyle = .overCurrentContext
             self.present(vc, animated: false)
+        }
+    }
+    
+    func displayNoConnectionError() {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Не удалось загрузить изображение", message: "Пожалуйста, проверьте соединение с интернетом и повторите попытку", preferredStyle: .alert)
+            let action = UIAlertAction(title: "OK", style: .default){_ in
+                self.presenter?.retryImageRequest()
+            }
+            alert.addAction(action)
+            self.present(alert, animated: true)
         }
     }
 }

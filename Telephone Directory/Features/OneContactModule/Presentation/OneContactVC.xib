@@ -14,6 +14,7 @@
                 <outlet property="cellLabel" destination="uog-Ii-P3e" id="kMR-tL-gvS"/>
                 <outlet property="contactImageView" destination="Qht-bh-hIc" id="i91-t4-3Iu"/>
                 <outlet property="fullNameLabel" destination="2rj-Qh-gVE" id="502-am-HGV"/>
+                <outlet property="loadingImageActivityIndicator" destination="HLB-A0-3tN" id="4YL-fL-hkb"/>
                 <outlet property="mailLabel" destination="7VK-1b-ydE" id="ao7-Pt-44E"/>
                 <outlet property="phoneLabel" destination="BaH-aS-bdH" id="Zod-qB-bPv"/>
                 <outlet property="view" destination="sez-Ll-HIa" id="cKp-ko-ram"/>
@@ -127,6 +128,9 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="HLB-A0-3tN">
+                    <rect key="frame" x="185" y="192" width="20" height="20"/>
+                </activityIndicatorView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="mUU-YE-9di"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -143,6 +147,7 @@
                 <constraint firstItem="mUU-YE-9di" firstAttribute="trailing" secondItem="2rj-Qh-gVE" secondAttribute="trailing" constant="25" id="Nyh-mv-7fn"/>
                 <constraint firstItem="sct-Ez-BSl" firstAttribute="leading" secondItem="zzh-Be-taM" secondAttribute="trailing" constant="16" id="SJm-8V-tMY"/>
                 <constraint firstItem="mUU-YE-9di" firstAttribute="trailing" secondItem="sct-Ez-BSl" secondAttribute="trailing" constant="30" id="Vdy-ZJ-Joc"/>
+                <constraint firstItem="HLB-A0-3tN" firstAttribute="centerX" secondItem="sez-Ll-HIa" secondAttribute="centerX" id="WTF-ou-6pF"/>
                 <constraint firstItem="Qht-bh-hIc" firstAttribute="centerX" secondItem="sez-Ll-HIa" secondAttribute="centerX" id="YBH-gb-AJZ"/>
                 <constraint firstItem="PT6-0x-ile" firstAttribute="top" secondItem="2rj-Qh-gVE" secondAttribute="bottom" constant="21" id="ZvL-52-u96"/>
                 <constraint firstItem="mUU-YE-9di" firstAttribute="trailing" secondItem="7VK-1b-ydE" secondAttribute="trailing" constant="25" id="bni-th-vUk"/>
@@ -152,6 +157,7 @@
                 <constraint firstItem="BaH-aS-bdH" firstAttribute="top" secondItem="2rj-Qh-gVE" secondAttribute="bottom" constant="27" id="h7y-B2-89l"/>
                 <constraint firstItem="bDJ-Js-sUx" firstAttribute="leading" secondItem="BaH-aS-bdH" secondAttribute="trailing" constant="26" id="nxt-xp-cwV"/>
                 <constraint firstItem="mUU-YE-9di" firstAttribute="trailing" secondItem="PT6-0x-ile" secondAttribute="trailing" constant="31" id="oKV-7z-VrD"/>
+                <constraint firstItem="HLB-A0-3tN" firstAttribute="centerY" secondItem="Qht-bh-hIc" secondAttribute="centerY" id="orm-FG-cXP"/>
                 <constraint firstItem="uog-Ii-P3e" firstAttribute="leading" secondItem="mUU-YE-9di" secondAttribute="leading" constant="25" id="uIa-ge-ht6"/>
                 <constraint firstItem="bDJ-Js-sUx" firstAttribute="top" secondItem="2rj-Qh-gVE" secondAttribute="bottom" constant="21" id="yI8-h5-RJG"/>
             </constraints>

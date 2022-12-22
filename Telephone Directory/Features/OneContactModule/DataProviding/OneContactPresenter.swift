@@ -53,29 +53,25 @@ class OneContactPresenter: OneContactPresenterProtocol {
         let fullPhone = unfilteredPhone.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
         let fullCell = unfilteredCell.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
         view?.reload(fullName: fullName, phone: fullPhone, cell: fullCell, email: email)
-        let image = await requestImage(string: largeImgStr)
-        view?.setImage(image: image)
+        await requestImage(string: largeImgStr)
     }
     
-    func requestImage(string: String) async -> UIImage {
+    func requestImage(string: String) async {
         guard let imageUrlString = string as? String else {
-            return UIImage(named: "Error")!}
+            return }
         let result = await self.networkService.requestImage(urlString: imageUrlString)
         switch result.status {
         case .success:
-            return UIImage(data: result.data!)!
+            guard let image = UIImage(data: result.data!) else { return }
+            view?.setImage(image: image)
         case .error:
-            return UIImage(named: "Error")!
-        case .noConnection:
-            return UIImage(named: "Error")!
+            view?.displayNoConnectionError()
         }
     }
-    
-    func findImage() {
+    func retryImageRequest() {
         Task{
-            let imgStr = largeImgStr ?? "https://icon-library.com/images/no-image-available-icon/no-image-available-icon-7.jpg"
-            let largeImage = await requestImage(string: imgStr)
-            view?.setImage(image: largeImage)
+            guard let imageStr = largeImgStr else { return }
+            await requestImage(string: imageStr)
         }
     }
 }

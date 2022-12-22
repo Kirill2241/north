@@ -53,8 +53,6 @@ class ContactListPresenter: NSObject, ContactListPresenterProtocol {
             return UIImage(data: result.data!)!
         case .error:
             return UIImage(named: "Error")!
-        case .noConnection:
-            return UIImage(named: "Error")!
         }
     }
     

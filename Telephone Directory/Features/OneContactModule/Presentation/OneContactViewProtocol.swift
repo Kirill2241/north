@@ -12,4 +12,5 @@ protocol OneContactViewProtocol: class, MFMessageComposeViewControllerDelegate {
     func reload(fullName: String, phone: String, cell: String, email: String)
     
     func setImage(image: UIImage)
+    func displayNoConnectionError()
 }
