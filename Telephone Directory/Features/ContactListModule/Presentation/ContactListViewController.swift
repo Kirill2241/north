@@ -15,6 +15,12 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
     let tableView = UITableView(frame: .zero)
     let activityIndicator = UIActivityIndicatorView(style: .large)
     let searchController = UISearchController(searchResultsController: nil)
+    let topView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.white
+        return view
+    }()
+    
     let nothingFoundLabel : UILabel = {
         let lbl = UILabel()
         lbl.font = UIFont.systemFont(ofSize: 20)
@@ -52,6 +58,7 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
     }
     
     func configureViews(){
+        view.addSubview(topView)
         tableView.register(ContactTableViewCell.self, forCellReuseIdentifier: ContactTableViewCell.reuseId)
         tableView.dataSource = presenter
         tableView.delegate = presenter
@@ -59,17 +66,23 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = true
         searchController.searchBar.placeholder = "Поиск контактов"
-        navigationController?.navigationBar.barTintColor = UIColor.white
-        navigationController?.navigationBar.backgroundColor = UIColor.white
-        //navigationController?.navigationBar.isTranslucent = false
-        navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.searchBar.searchBarStyle = .minimal
         definesPresentationContext = true
+        navigationController?.navigationBar.backgroundColor = UIColor.white
+        navigationItem.searchController = searchController
+        navigationItem.titleView = searchController.searchBar
+        searchController.searchBar.isTranslucent = false
+        navigationItem.hidesSearchBarWhenScrolling = false
     }
     
     func setUpConstraints(){
+        topView.snp.makeConstraints{ (maker) in
+            maker.top.leading.trailing.equalToSuperview()
+            maker.height.equalToSuperview().multipliedBy(0.12)
+        }
         tableView.snp.makeConstraints{ (maker) in
-            maker.top.leading.trailing.bottom.equalToSuperview()
+            maker.top.equalTo(topView.snp.bottom)
+            maker.leading.trailing.bottom.equalToSuperview()
         }
     }
     
