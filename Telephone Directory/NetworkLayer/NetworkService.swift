@@ -26,14 +26,12 @@ class NetworkService: NetworkServiceProtocol {
             }
         }
         urlString += components
-        let result = try? await loadContactList(urlString: urlString)
+        let result = await loadContactList(urlString: urlString)
         switch result {
         case .failure(let error):
-            return NetworkServiceCustomData(status: .error)
+            return NetworkServiceCustomData(status: .error, error: error)
         case .success(let requestResp):
             return NetworkServiceCustomData(status: .success, result: requestResp)
-        case .none:
-            return NetworkServiceCustomData(status: .error)
         }
     }
     
@@ -59,14 +57,12 @@ class NetworkService: NetworkServiceProtocol {
     }
     
     func requestImage(urlString: String) async -> NetworkServiceImageData{
-        let result = try? await loadImage(from: urlString)
+        let result = await loadImage(from: urlString)
         switch result {
         case .failure(let error):
             return NetworkServiceImageData(status: .error, error: error)
         case .success(let data):
             return NetworkServiceImageData(status: .success, data: data)
-        case .none:
-            return NetworkServiceImageData(status: .noConnection)
         }
     }
     

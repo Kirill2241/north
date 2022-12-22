@@ -6,7 +6,7 @@
 //
 import UIKit
 
-protocol ContactListViewProtocol: class, UISearchResultsUpdating {
+protocol ContactListViewProtocol: UISearchResultsUpdating {
     func setContentView()
     func setRequestFailureView()
     func setAPIErrorView(errorString: String)

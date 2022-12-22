@@ -8,7 +8,7 @@
 import UIKit
 import MessageUI
 
-protocol OneContactViewProtocol: class, MFMessageComposeViewControllerDelegate {
+protocol OneContactViewProtocol: MFMessageComposeViewControllerDelegate {
     func reload(fullName: String, phone: String, cell: String, email: String)
     
     func setImage(image: UIImage)

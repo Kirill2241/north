@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol OneContactPresenterProtocol: class {
+protocol OneContactPresenterProtocol {
     init(view: OneContactViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol, fullName: String, phone: String, cell: String, email: String, largeImgStr: String, nat: String)
     func findImage()
     

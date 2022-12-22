@@ -58,9 +58,7 @@ class OneContactPresenter: OneContactPresenterProtocol {
     }
     
     func requestImage(string: String) async -> UIImage {
-        guard let imageUrlString = string as? String else {
-            return UIImage(named: "Error")!}
-        let result = await self.networkService.requestImage(urlString: imageUrlString)
+        let result = await self.networkService.requestImage(urlString: string)
         switch result.status {
         case .success:
             return UIImage(data: result.data!)!

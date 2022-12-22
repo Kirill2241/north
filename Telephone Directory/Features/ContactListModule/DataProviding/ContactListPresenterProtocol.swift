@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-protocol ContactListPresenterProtocol: class, UITableViewDataSource, UITableViewDelegate {
+protocol ContactListPresenterProtocol: UITableViewDataSource, UITableViewDelegate {
     init(view: ContactListViewProtocol,networkService: NetworkServiceProtocol, router: RouterProtocol)
     func filterContacts(_ searchText: String)
     func tryRequest()
