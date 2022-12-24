@@ -11,5 +11,6 @@ import MessageUI
 protocol OneContactViewProtocol: class, MFMessageComposeViewControllerDelegate {
     func reload(fullName: String, phone: String, cell: String, email: String)
     
-    func setImage(image: UIImage)
+    func setImage(data: Data)
+    func setRequestFailureView()
 }

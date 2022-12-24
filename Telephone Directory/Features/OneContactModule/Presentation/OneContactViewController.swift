@@ -22,6 +22,11 @@ class OneContactViewController: UIViewController, OneContactViewProtocol {
     @IBOutlet weak var cellLabel: UILabel!
     @IBOutlet weak var mailLabel: UILabel!
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        presenter?.findImage()
+    }
+    
     func reload(fullName: String, phone: String, cell: String, email: String) {
         DispatchQueue.main.async {
             self.contactImageView.image = UIImage(named: "Error")
@@ -68,13 +73,24 @@ class OneContactViewController: UIViewController, OneContactViewProtocol {
         }
     }
     
-    func setImage(image: UIImage) {
+    func setImage(data: Data) {
         DispatchQueue.main.async {
+            guard let image = UIImage(data: data) else { return  }
             self.contactImageView.image = image
             let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.enlargeImage(_:)))
             tapGestureRecognizer.numberOfTouchesRequired = 1
             self.contactImageView.isUserInteractionEnabled = true
             self.contactImageView.addGestureRecognizer(tapGestureRecognizer)
+        }
+    }
+    
+    func setRequestFailureView() {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Не удалось загрузить изображение", message: "Пожалуйста, проверьте подключение и повторите попытку", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "Повторить попытку", style: UIAlertAction.Style.default){_ in
+                self.presenter?.findImage()
+            })
+            self.present(alert, animated: true, completion: nil)
         }
     }
     

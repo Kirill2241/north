@@ -16,5 +16,4 @@ struct NetworkServiceCustomData {
 enum CustomDataStatusEnum {
     case success
     case error
-    case none
 }

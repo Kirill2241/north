@@ -10,6 +10,12 @@
 		343C314A0A171AB831F5703A /* Pods_Telephone_DirectoryTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7BA1282F69DD605F825FFA9 /* Pods_Telephone_DirectoryTests.framework */; };
 		5A60C8869DAD2AD1FDFE9D7A /* Pods_Telephone_Directory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8853C93A0DA7F3D531C75643 /* Pods_Telephone_Directory.framework */; };
 		88A0AA85FF06E6717E611FAB /* Pods_Telephone_Directory_Telephone_DirectoryUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 976D76945A582FC3581F361A /* Pods_Telephone_Directory_Telephone_DirectoryUITests.framework */; };
+		EB4FC4A72954F00800A9F506 /* NetworkServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4FC4A62954F00800A9F506 /* NetworkServiceProtocol.swift */; };
+		EB4FC4A92954F10C00A9F506 /* ContactListInteractorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4FC4A82954F10C00A9F506 /* ContactListInteractorProtocol.swift */; };
+		EB4FC4AB2954F11F00A9F506 /* ContactListInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4FC4AA2954F11F00A9F506 /* ContactListInteractor.swift */; };
+		EB4FC4AE2954F31100A9F506 /* ContactItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4FC4AD2954F31100A9F506 /* ContactItem.swift */; };
+		EB4FC4B02956481A00A9F506 /* OneContactInteractorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4FC4AF2956481A00A9F506 /* OneContactInteractorProtocol.swift */; };
+		EB4FC4B22956482B00A9F506 /* OneContactInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4FC4B12956482B00A9F506 /* OneContactInteractor.swift */; };
 		EB5AF7232950AF5A00AE4298 /* NetworkServiceCustomData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5AF7222950AF5A00AE4298 /* NetworkServiceCustomData.swift */; };
 		EB5AF7252950C4EE00AE4298 /* NetworkServiceImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5AF7242950C4EE00AE4298 /* NetworkServiceImageData.swift */; };
 		EB5AF7272950E35600AE4298 /* OneContactVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB5AF7262950E35600AE4298 /* OneContactVC.xib */; };
@@ -68,6 +74,12 @@
 		97A7ADD18EAA789274C8ADF0 /* Pods-Telephone Directory.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telephone Directory.debug.xcconfig"; path = "Target Support Files/Pods-Telephone Directory/Pods-Telephone Directory.debug.xcconfig"; sourceTree = "<group>"; };
 		C7BA1282F69DD605F825FFA9 /* Pods_Telephone_DirectoryTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Telephone_DirectoryTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E252C1A0A54335DEDF11D1C6 /* Pods-Telephone DirectoryTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telephone DirectoryTests.debug.xcconfig"; path = "Target Support Files/Pods-Telephone DirectoryTests/Pods-Telephone DirectoryTests.debug.xcconfig"; sourceTree = "<group>"; };
+		EB4FC4A62954F00800A9F506 /* NetworkServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceProtocol.swift; sourceTree = "<group>"; };
+		EB4FC4A82954F10C00A9F506 /* ContactListInteractorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListInteractorProtocol.swift; sourceTree = "<group>"; };
+		EB4FC4AA2954F11F00A9F506 /* ContactListInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListInteractor.swift; sourceTree = "<group>"; };
+		EB4FC4AD2954F31100A9F506 /* ContactItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactItem.swift; sourceTree = "<group>"; };
+		EB4FC4AF2956481A00A9F506 /* OneContactInteractorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneContactInteractorProtocol.swift; sourceTree = "<group>"; };
+		EB4FC4B12956482B00A9F506 /* OneContactInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneContactInteractor.swift; sourceTree = "<group>"; };
 		EB5AF7222950AF5A00AE4298 /* NetworkServiceCustomData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceCustomData.swift; sourceTree = "<group>"; };
 		EB5AF7242950C4EE00AE4298 /* NetworkServiceImageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceImageData.swift; sourceTree = "<group>"; };
 		EB5AF7262950E35600AE4298 /* OneContactVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OneContactVC.xib; sourceTree = "<group>"; };
@@ -144,6 +156,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		EB4FC4AC2954F2A800A9F506 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				EB4FC4AD2954F31100A9F506 /* ContactItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		EB5AF7142950A3D500AE4298 /* AppConstants */ = {
 			isa = PBXGroup;
 			children = (
@@ -195,27 +215,11 @@
 			path = Features;
 			sourceTree = "<group>";
 		};
-		EB5AF71B2950A64E00AE4298 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				EB5AF71C2950A65E00AE4298 /* JSON */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		EB5AF71C2950A65E00AE4298 /* JSON */ = {
-			isa = PBXGroup;
-			children = (
-				EBAB578E2939174C00DCD66A /* ContactModel.swift */,
-			);
-			path = JSON;
-			sourceTree = "<group>";
-		};
 		EB5AF71D2950A67000AE4298 /* DataProviding */ = {
 			isa = PBXGroup;
 			children = (
-				EBAB57812937D8C300DCD66A /* ContactListPresenter.swift */,
-				EBAB57A6294085EF00DCD66A /* ContactListPresenterProtocol.swift */,
+				EB4FC4A82954F10C00A9F506 /* ContactListInteractorProtocol.swift */,
+				EB4FC4AA2954F11F00A9F506 /* ContactListInteractor.swift */,
 			);
 			path = DataProviding;
 			sourceTree = "<group>";
@@ -226,6 +230,8 @@
 				EBAB57852937D98200DCD66A /* ContactListViewController.swift */,
 				EBAB57A82940863000DCD66A /* ContactListViewProtocol.swift */,
 				EBAB57892937E09B00DCD66A /* ContactTableViewCell.swift */,
+				EBAB57812937D8C300DCD66A /* ContactListPresenter.swift */,
+				EBAB57A6294085EF00DCD66A /* ContactListPresenterProtocol.swift */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -233,8 +239,8 @@
 		EB5AF71F2950A6BC00AE4298 /* DataProviding */ = {
 			isa = PBXGroup;
 			children = (
-				EBAB5792293A085700DCD66A /* OneContactPresenter.swift */,
-				EBAB57AC294086D100DCD66A /* OneContactPresenterProtocol.swift */,
+				EB4FC4AF2956481A00A9F506 /* OneContactInteractorProtocol.swift */,
+				EB4FC4B12956482B00A9F506 /* OneContactInteractor.swift */,
 			);
 			path = DataProviding;
 			sourceTree = "<group>";
@@ -244,6 +250,8 @@
 			children = (
 				EBAB57AE2940870A00DCD66A /* OneContactViewProtocol.swift */,
 				EBAB57512937D63A00DCD66A /* OneContactViewController.swift */,
+				EBAB5792293A085700DCD66A /* OneContactPresenter.swift */,
+				EBAB57AC294086D100DCD66A /* OneContactPresenterProtocol.swift */,
 				EB5AF7262950E35600AE4298 /* OneContactVC.xib */,
 			);
 			path = Presentation;
@@ -319,8 +327,8 @@
 			isa = PBXGroup;
 			children = (
 				EB5AF71E2950A69600AE4298 /* Presentation */,
+				EB4FC4AC2954F2A800A9F506 /* Models */,
 				EB5AF71D2950A67000AE4298 /* DataProviding */,
-				EB5AF71B2950A64E00AE4298 /* Models */,
 			);
 			path = ContactListModule;
 			sourceTree = "<group>";
@@ -329,8 +337,10 @@
 			isa = PBXGroup;
 			children = (
 				EBAB57832937D91B00DCD66A /* NetworkService.swift */,
+				EB4FC4A62954F00800A9F506 /* NetworkServiceProtocol.swift */,
 				EB5AF7222950AF5A00AE4298 /* NetworkServiceCustomData.swift */,
 				EB5AF7242950C4EE00AE4298 /* NetworkServiceImageData.swift */,
+				EBAB578E2939174C00DCD66A /* ContactModel.swift */,
 			);
 			path = NetworkLayer;
 			sourceTree = "<group>";
@@ -612,15 +622,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				EBAB57A92940863000DCD66A /* ContactListViewProtocol.swift in Sources */,
+				EB4FC4AE2954F31100A9F506 /* ContactItem.swift in Sources */,
 				EBAB578D2939160600DCD66A /* TelephoneDirectory.xcdatamodeld in Sources */,
 				EBAB57522937D63A00DCD66A /* OneContactViewController.swift in Sources */,
 				EBAB57862937D98200DCD66A /* ContactListViewController.swift in Sources */,
 				EBAB574E2937D63A00DCD66A /* AppDelegate.swift in Sources */,
+				EB4FC4B22956482B00A9F506 /* OneContactInteractor.swift in Sources */,
 				EBAB57912939316900DCD66A /* HTTPError.swift in Sources */,
 				EBAB57A32940858300DCD66A /* RouterProtocol.swift in Sources */,
+				EB4FC4B02956481A00A9F506 /* OneContactInteractorProtocol.swift in Sources */,
 				EBAB57802937D77C00DCD66A /* Router.swift in Sources */,
 				EB5AF7252950C4EE00AE4298 /* NetworkServiceImageData.swift in Sources */,
 				EBAB57AF2940870A00DCD66A /* OneContactViewProtocol.swift in Sources */,
+				EB4FC4A72954F00800A9F506 /* NetworkServiceProtocol.swift in Sources */,
 				EBAB57A7294085EF00DCD66A /* ContactListPresenterProtocol.swift in Sources */,
 				EBAB57502937D63A00DCD66A /* SceneDelegate.swift in Sources */,
 				EBAB5793293A085700DCD66A /* OneContactPresenter.swift in Sources */,
@@ -628,7 +642,9 @@
 				EBAB577E2937D70900DCD66A /* ModuleBuilder.swift in Sources */,
 				EBAB57B12940A5BF00DCD66A /* CustomModalViewController.swift in Sources */,
 				EBAB578A2937E09B00DCD66A /* ContactTableViewCell.swift in Sources */,
+				EB4FC4AB2954F11F00A9F506 /* ContactListInteractor.swift in Sources */,
 				EBAB57822937D8C300DCD66A /* ContactListPresenter.swift in Sources */,
+				EB4FC4A92954F10C00A9F506 /* ContactListInteractorProtocol.swift in Sources */,
 				EB5AF7232950AF5A00AE4298 /* NetworkServiceCustomData.swift in Sources */,
 				EBAB57AD294086D100DCD66A /* OneContactPresenterProtocol.swift in Sources */,
 				EBAB57842937D91B00DCD66A /* NetworkService.swift in Sources */,

@@ -33,6 +33,7 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
         initialConfig()
+        presenter?.tryRequest()
         // Do any additional setup after loading the view.
     }
     
@@ -53,8 +54,8 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
     
     func configureViews(){
         tableView.register(ContactTableViewCell.self, forCellReuseIdentifier: ContactTableViewCell.reuseId)
-        tableView.dataSource = presenter
-        tableView.delegate = presenter
+        tableView.dataSource = self
+        tableView.delegate = self
         view.addSubview(tableView)
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = true
@@ -89,6 +90,12 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
             if self.activityIndicator.isAnimating{
                 self.activityIndicator.stopAnimating()
             }
+            let alert = UIAlertController(title: "При выполнении запроса произошла ошибка", message: "Пожалуйста, проверьте подключение и повторите попытку", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "Повторить попытку", style: UIAlertAction.Style.default){_ in
+                self.presenter?.tryRequest()
+            })
+            self.present(alert, animated: true, completion: nil)
+            /*
             let noInternetImageView : UIImageView = {
                 let imgV = UIImageView()
                 imgV.contentMode = .scaleAspectFit
@@ -122,7 +129,7 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
             retryGR.direction = .down
             retryGR.numberOfTouchesRequired = 1
             retryGR.addTarget(self, action: #selector(self.retryRequest(_:)))
-            self.view.addGestureRecognizer(retryGR)
+            self.view.addGestureRecognizer(retryGR)*/
         }
     }
     
@@ -180,8 +187,59 @@ class ContactListViewController: UIViewController, ContactListViewProtocol{
 }
 
 extension ContactListViewController: UISearchResultsUpdating{
-    
     func updateSearchResults(for searchController: UISearchController) {
         presenter?.filterContacts(searchController.searchBar.text!)
+    }
+}
+
+extension ContactListViewController: UITableViewDataSource{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if checkFiltering(){
+            if presenter?.filteredContacts.count == 0{
+                nothingFound()
+            }
+            removeNothingFoundLabel()
+            return presenter?.filteredContacts.count ?? 0
+        }
+        removeNothingFoundLabel()
+        return presenter?.allContacts.count ?? 0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: ContactTableViewCell.reuseId, for: indexPath) as! ContactTableViewCell
+        var contact: ContactItem?
+        var image: UIImage?
+        if checkFiltering(){
+            contact = presenter?.filteredContacts[indexPath.row].0
+            let data = presenter?.filteredContacts[indexPath.row].1
+            if data != nil{
+                image = UIImage(data: data!)!
+            }else{
+                image = UIImage(named: "Error")!
+            }
+        } else {
+            contact = presenter?.allContacts[indexPath.row].0
+            let data = presenter?.allContacts[indexPath.row].1
+            if data != nil{
+                image = UIImage(data: data!)!
+            }else{
+                image = UIImage(named: "Error")!
+            }
+        }
+        guard let fullName = contact?.fullname else { return cell}
+        cell.configure(fullName: fullName, photo: image ?? UIImage(named: "Error")!)
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 50
+    }
+}
+
+extension ContactListViewController: UITableViewDelegate{
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let indexPath = tableView.indexPathForSelectedRow{
+            presenter?.openOneContact(index: indexPath.row, filterIsUsed: checkFiltering())
+        }
     }
 }

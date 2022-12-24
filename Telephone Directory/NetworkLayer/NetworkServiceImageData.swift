@@ -16,5 +16,4 @@ struct NetworkServiceImageData {
 enum ImageDataStatusEnum {
     case success
     case error
-    case noConnection
 }

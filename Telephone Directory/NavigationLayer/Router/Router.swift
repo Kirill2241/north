@@ -24,9 +24,9 @@ class Router: RouterProtocol{
         }
     }
     
-    func openContact(fullName: String, phone: String, cell: String, email: String, largeImgStr: String, nat: String) {
+    func openContact(contact: ContactItem) {
         if let navigationController = navigationController {
-            guard let oneContactVC = moduleBuilder?.buildOneContact(router: self, fullName: fullName, phone: phone, cell: cell, email: email, largeImgStr: largeImgStr, nat: nat) else { return }
+            guard let oneContactVC = moduleBuilder?.buildOneContact(router: self, oneContact: contact) else { return }
             navigationController.pushViewController(oneContactVC, animated: true)
         }
     }

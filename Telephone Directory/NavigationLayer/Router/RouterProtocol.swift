@@ -14,5 +14,5 @@ protocol RouterBasic {
 
 protocol RouterProtocol: RouterBasic {
     func initialViewController()
-    func openContact(fullName: String, phone: String, cell: String, email: String, largeImgStr: String, nat: String)
+    func openContact(contact: ContactItem)
 }
