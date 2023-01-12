@@ -8,9 +8,6 @@
 import Foundation
 
 protocol NetworkServiceProtocol {
-    func processContactListRequest(_ numberOfResults: Int) -> NetworkServiceCustomData
-    func requestImage(urlString: String) -> NetworkServiceImageData
-    
-    func loadContactList(number: Int, completion: @escaping(Result<[ContactInstance]?, HTTPError>) -> Void)
-    func loadImage(from text: String, completion: @escaping(Result<Data?, HTTPError>) -> Void)
+    func requestImage(urlString: String, completion: @escaping(Data?) -> Void)
+    func prepareNetworkResponseForPresentation(number: Int, completion: @escaping(([ContactItem]?, ContactListDownloadStatus)) -> Void)
 }

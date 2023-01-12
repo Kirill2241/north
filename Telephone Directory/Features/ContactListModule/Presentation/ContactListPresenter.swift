@@ -6,102 +6,64 @@
 //
 
 import Foundation
-import UIKit
 
-class ContactListPresenter: NSObject, ContactListPresenterProtocol {
-    
+class ContactListPresenter: ContactListPresenterProtocol {
     
     weak var view: ContactListViewProtocol?
-    var interactor: ContactListInteractorProtocol?
-    var allContacts: [(ContactItem, Data?)] = []
-    var filteredContacts: [(ContactItem, Data?)] = []
-    var searchBarIsEmpty: Bool = true
-    required init(view: ContactListViewProtocol) {
+    var networkService: NetworkServiceProtocol!
+    var router: RouterProtocol?
+    private var contactsThumbnailsDictStruct: ContactItemsAndThumbnailsDictionary = ContactItemsAndThumbnailsDictionary(dictionary: [:])
+    
+    init(view: ContactListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol) {
         self.view = view
-        super.init()
-    }
-    
-    func requestContacts(numberOfContacts: Int) {
-        //interactor?.requestContacts(numberOfContacts: numberOfContacts)
-        /*
-        let response = interactor?.requestContacts(numberOfContacts: numberOfContacts)
-        switch response {
-        case .success(let contactList):
-            contactList.forEach({allContacts.append($0)})
-            view?.setContentView()
-        case .failure(_):
-            view?.setRequestFailureView()
-        case .none:
-            view?.setRequestFailureView()
-        }
-        
-        let networkData = await networkService.processContactListRequest(numberOfContacts, fields: fields)
-        switch networkData.status {
-        case .error:
-            view?.setRequestFailureView()
-        case .success:
-            if networkData.result?.error != nil {
-                view?.setAPIErrorView(errorString: (networkData.result?.error!)!)
-            }else{
-                for instance in networkData.result?.results ?? []{
-                    let image = await requestImage(string: instance.picture.thumbnail)
-                    let tuple = (instance, image)
-                    allContacts.append(tuple)
-                }
-                view?.setContentView()
-            }
-        case .none:
-            print("")
-        }*/
-    }
-    
-    
-    /*
-    func requestImage(string: String) async -> UIImage {
-        guard let imageUrlString = string as? String else {
-            return UIImage(named: "Error")!}
-        let result = await networkService.requestImage(urlString: imageUrlString)
-        switch result.status {
-        case .success:
-            return UIImage(data: result.data!)!
-        case .error:
-            return UIImage(named: "Error")!
-        case .noConnection:
-            return UIImage(named: "Error")!
-        }
-    }*/
-    
-    func filterContacts(_ searchText: String){
-        filteredContacts = allContacts.filter({ (contactTuple: (ContactItem, Data?)) -> Bool in
-            return contactTuple.0.fullname.lowercased().contains(searchText.lowercased())
-        })
-        view?.applyFilter()
+        self.networkService = networkService
+        self.router = router
     }
     
     func tryRequest() {
-        interactor?.requestContacts(numberOfContacts: 1000)
-    }
-    
-    func openOneContact(index: Int, filterIsUsed: Bool) {
-        if filterIsUsed{
-            let contactTuple = filteredContacts[index]
-            interactor?.openContact(contact: contactTuple.0)
-        }else{
-            let contactTuple = allContacts[index]
-            interactor?.openContact(contact: contactTuple.0)
+        networkService.prepareNetworkResponseForPresentation(number: 1000) { result in
+            switch result.1{
+            case .failure:
+                self.view?.setRequestFailureView()
+            case .success:
+                guard let array = result.0 else { return }
+                for i in 0...array.count-1{
+                    self.getThumbnail(string: array[i].thumbnailString, contact: array[i])
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0, execute: {
+                    self.view?.setViewControllerDataSource(self.contactsThumbnailsDictStruct.dictionary)
+                    self.view?.setContentView()
+                })
+            }
         }
     }
     
-    func fillViewWithContent() {
-        //instances.forEach({allContacts.append($0)})
-        view?.setContentView()
+    private func getThumbnail(string: String, contact: ContactItem) {
+        networkService.requestImage(urlString: string){ result in
+            self.contactsThumbnailsDictStruct.dictionary[contact] = result
+        }
     }
     
-    func collectData(_ data: Data?, contact: ContactItem) {
-        allContacts.append((contact, data))
+    func filterContacts(_ searchText: String) {
+        guard let contactListIsFiltered = view?.checkIfContactListIsFiltered() else { return }
+        if contactListIsFiltered {
+            let filteredContacts = contactsThumbnailsDictStruct.dictionary.filter({ $0.key.fullname.lowercased().contains(searchText.lowercased())
+            })
+            if filteredContacts.count == 0 {
+                view?.createNothingFoundLabel()
+            } else {
+                view?.removeNothingFoundLabel()
+            }
+            view?.setViewControllerDataSource(filteredContacts)
+            view?.applyFilter()
+        } else {
+            view?.setViewControllerDataSource(contactsThumbnailsDictStruct.dictionary)
+            view?.removeNothingFoundLabel()
+            view?.applyFilter()
+        }
     }
     
-    func errorAlert(error: HTTPError) {
-        view?.setRequestFailureView()
+    func openContact(_ contact: ContactItem) {
+        router?.openContact(contact: contact)
     }
 }

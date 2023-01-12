@@ -6,12 +6,12 @@
 //
 import UIKit
 
-protocol ContactListViewProtocol: class, UISearchResultsUpdating, UITableViewDataSource, UITableViewDelegate {
+protocol ContactListViewProtocol: AnyObject {
+    func setViewControllerDataSource(_ source:[ContactItem: Data?])
     func setContentView()
     func setRequestFailureView()
-    func setAPIErrorView(errorString: String)
     func applyFilter()
-    func checkFiltering() -> Bool
-    func nothingFound()
+    func checkIfContactListIsFiltered() -> Bool
+    func createNothingFoundLabel()
     func removeNothingFoundLabel()
 }

@@ -11,7 +11,7 @@ import SnapKit
 class ContactTableViewCell: UITableViewCell {
 
     
-    let contactPhotoImageView: UIImageView = {
+    private let contactPhotoImageView: UIImageView = {
         let imgView = UIImageView()
         imgView.contentMode = .scaleAspectFit
         imgView.clipsToBounds = true
@@ -19,7 +19,7 @@ class ContactTableViewCell: UITableViewCell {
         return imgView
     }()
     
-    let fullNameLabel: UILabel = {
+    private let fullNameLabel: UILabel = {
         let lbl = UILabel()
         lbl.textAlignment = .left
         lbl.numberOfLines = 0
@@ -33,12 +33,6 @@ class ContactTableViewCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -50,12 +44,12 @@ class ContactTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func placeSubviews() {
+    private func placeSubviews() {
         contentView.addSubview(contactPhotoImageView)
         contentView.addSubview(fullNameLabel)
     }
     
-    func setUpConstraints(){
+    private func setUpConstraints() {
         contactPhotoImageView.snp.makeConstraints{ (maker) in
             maker.top.equalToSuperview().offset(10)
             maker.leading.equalToSuperview().offset(15)

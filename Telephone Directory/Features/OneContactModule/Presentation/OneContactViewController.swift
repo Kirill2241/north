@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 import MessageUI
-import Network
+
 class OneContactViewController: UIViewController, OneContactViewProtocol {
     
     var presenter: OneContactPresenterProtocol?
@@ -16,7 +16,6 @@ class OneContactViewController: UIViewController, OneContactViewProtocol {
     var cell: String?
     
     @IBOutlet weak var contactImageView: UIImageView!
-    
     @IBOutlet weak var fullNameLabel: UILabel!
     @IBOutlet weak var phoneLabel: UILabel!
     @IBOutlet weak var cellLabel: UILabel!
@@ -24,10 +23,9 @@ class OneContactViewController: UIViewController, OneContactViewProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter?.findImage()
     }
     
-    func reload(fullName: String, phone: String, cell: String, email: String) {
+    func reloadView(fullName: String, phone: String, cell: String, email: String) {
         DispatchQueue.main.async {
             self.contactImageView.image = UIImage(named: "Error")
             self.fullNameLabel.text = fullName
@@ -36,6 +34,7 @@ class OneContactViewController: UIViewController, OneContactViewProtocol {
             self.cell = cell
             self.cellLabel.text = "Мобильный: "+cell
             self.mailLabel.text = email
+            self.presenter?.requestImage()
         }
     }
     
@@ -88,13 +87,13 @@ class OneContactViewController: UIViewController, OneContactViewProtocol {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: "Не удалось загрузить изображение", message: "Пожалуйста, проверьте подключение и повторите попытку", preferredStyle: UIAlertController.Style.alert)
             alert.addAction(UIAlertAction(title: "Повторить попытку", style: UIAlertAction.Style.default){_ in
-                self.presenter?.findImage()
+                self.presenter?.requestImage()
             })
             self.present(alert, animated: true, completion: nil)
         }
     }
     
-    @objc func enlargeImage(_ sender: UITapGestureRecognizer){
+    @objc func enlargeImage(_ sender: UITapGestureRecognizer) {
         DispatchQueue.main.async {
             let vc = CustomModalViewController()
             guard let image = self.contactImageView.image else { return }
@@ -105,7 +104,7 @@ class OneContactViewController: UIViewController, OneContactViewProtocol {
     }
 }
 
-extension OneContactViewController: MFMessageComposeViewControllerDelegate{
+extension OneContactViewController: MFMessageComposeViewControllerDelegate {
     func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
         self.dismiss(animated: true, completion: nil)
     }

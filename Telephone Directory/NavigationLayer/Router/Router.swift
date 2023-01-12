@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class Router: RouterProtocol{
+class Router: RouterProtocol {
     var navigationController: UINavigationController?
     var moduleBuilder: ModuleBuilderProtocol?
     

@@ -7,11 +7,6 @@
 
 import Foundation
 
-protocol OneContactPresenterProtocol: class {
-    init(view: OneContactViewProtocol)
-    func setImage(data: Data)
-    
-    func presentContactInfo(contact: ContactItem)
-    func displayErrorMessage()
-    func findImage()
+protocol OneContactPresenterProtocol: AnyObject {
+    func requestImage()
 }

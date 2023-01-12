@@ -64,11 +64,7 @@
                         <constraint firstAttribute="height" constant="36" id="9eB-Zz-eJo"/>
                         <constraint firstAttribute="width" constant="36" id="w8Z-fC-cdM"/>
                     </constraints>
-                    <buttonConfiguration key="configuration" style="filled" image="phone.fill" catalog="system">
-                        <backgroundConfiguration key="background">
-                            <color key="backgroundColor" systemColor="systemGreenColor"/>
-                        </backgroundConfiguration>
-                    </buttonConfiguration>
+                    <buttonConfiguration key="configuration" style="plain" image="phone.fill" catalog="system"/>
                     <connections>
                         <action selector="callPhoneNumber:" destination="-1" eventType="touchUpInside" id="o1R-oj-Zy8"/>
                     </connections>
@@ -79,11 +75,7 @@
                         <constraint firstAttribute="height" constant="36" id="7gO-ta-28S"/>
                         <constraint firstAttribute="width" constant="36" id="ZdN-ks-Q2g"/>
                     </constraints>
-                    <buttonConfiguration key="configuration" style="filled" image="phone.fill" catalog="system">
-                        <backgroundConfiguration key="background">
-                            <color key="backgroundColor" systemColor="systemGreenColor"/>
-                        </backgroundConfiguration>
-                    </buttonConfiguration>
+                    <buttonConfiguration key="configuration" style="plain" image="phone.fill" catalog="system"/>
                     <connections>
                         <action selector="callCellNumber:" destination="-1" eventType="touchUpInside" id="zeI-Xr-pT1"/>
                     </connections>
@@ -94,11 +86,7 @@
                         <constraint firstAttribute="height" constant="36" id="NAJ-8o-Pmy"/>
                         <constraint firstAttribute="width" constant="36" id="unv-HZ-6sH"/>
                     </constraints>
-                    <buttonConfiguration key="configuration" style="filled" image="message.fill" catalog="system">
-                        <backgroundConfiguration key="background">
-                            <color key="backgroundColor" systemColor="systemGreenColor"/>
-                        </backgroundConfiguration>
-                    </buttonConfiguration>
+                    <buttonConfiguration key="configuration" style="plain" image="message.fill" catalog="system"/>
                     <connections>
                         <action selector="sendSMSToPhoneNumber:" destination="-1" eventType="touchUpInside" id="zcA-dZ-qsS"/>
                     </connections>
@@ -109,11 +97,7 @@
                         <constraint firstAttribute="height" constant="36" id="VK9-e9-jxR"/>
                         <constraint firstAttribute="width" constant="36" id="YBN-7S-pct"/>
                     </constraints>
-                    <buttonConfiguration key="configuration" style="filled" image="message.fill" catalog="system">
-                        <backgroundConfiguration key="background">
-                            <color key="backgroundColor" systemColor="systemGreenColor"/>
-                        </backgroundConfiguration>
-                    </buttonConfiguration>
+                    <buttonConfiguration key="configuration" style="plain" image="message.fill" catalog="system"/>
                     <connections>
                         <action selector="sendSMSToCellNumber:" destination="-1" eventType="touchUpInside" id="Kir-25-tYK"/>
                     </connections>
@@ -163,9 +147,6 @@
         <image name="phone.fill" catalog="system" width="128" height="114"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemGreenColor">
-            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

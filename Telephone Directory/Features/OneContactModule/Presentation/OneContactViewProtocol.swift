@@ -6,11 +6,9 @@
 //
 
 import UIKit
-import MessageUI
 
-protocol OneContactViewProtocol: class, MFMessageComposeViewControllerDelegate {
-    func reload(fullName: String, phone: String, cell: String, email: String)
-    
+protocol OneContactViewProtocol: AnyObject {
+    func reloadView(fullName: String, phone: String, cell: String, email: String)
     func setImage(data: Data)
     func setRequestFailureView()
 }

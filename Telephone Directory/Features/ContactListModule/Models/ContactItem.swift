@@ -6,12 +6,12 @@
 //
 import Foundation
 
-struct ContactItem {
-    var fullname: String
-    var email: String
-    var phone: String
-    
-    var cell: String
-    var largeImageStr: String
-    var nat: String
+struct ContactItem: Hashable {
+    let fullname: String
+    let email: String
+    let phone: String
+    let cell: String
+    let largeImageStr: String
+    let nat: String
+    let thumbnailString: String
 }

@@ -9,32 +9,32 @@ import UIKit
 import SnapKit
 class CustomModalViewController: UIViewController {
 
-    lazy var containerView: UIView = {
-            let view = UIView()
-            view.backgroundColor = .white
-            view.layer.cornerRadius = 16
-            view.clipsToBounds = true
-            return view
-        }()
+    private lazy var containerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 16
+        view.clipsToBounds = true
+        return view
+    }()
         
-        let maxDimmedAlpha: CGFloat = 0.6
-        lazy var dimmedView: UIView = {
-            let view = UIView()
-            view.backgroundColor = .black
-            view.alpha = maxDimmedAlpha
-            return view
-        }()
-    lazy var photoImageView: UIImageView = {
+    private let maxDimmedAlpha: CGFloat = 0.6
+    lazy var dimmedView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .black
+        view.alpha = maxDimmedAlpha
+        return view
+    }()
+    private lazy var photoImageView: UIImageView = {
         let imgV = UIImageView()
         imgV.contentMode = .scaleAspectFit
         return imgV
     }()
         
-        override func viewDidLoad() {
-            super.viewDidLoad()
-            setupView()
-            setupConstraints()
-        }
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupView()
+        setupConstraints()
+    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -42,11 +42,11 @@ class CustomModalViewController: UIViewController {
         animateShowDimmedView()
     }
         
-        func setupView() {
-            view.backgroundColor = .clear
-            view.addSubview(dimmedView)
-            view.addSubview(containerView)
-        }
+    private func setupView() {
+        view.backgroundColor = .clear
+        view.addSubview(dimmedView)
+        view.addSubview(containerView)
+    }
         
     func addImage(image: UIImage){
         DispatchQueue.main.async {
@@ -61,18 +61,18 @@ class CustomModalViewController: UIViewController {
         }
     }
     
-        func setupConstraints() {
-            dimmedView.snp.makeConstraints{ (maker) in
-                maker.edges.equalToSuperview()
-            }
-            containerView.snp.makeConstraints{ (maker) in
-                maker.horizontalEdges.equalToSuperview()
-                maker.height.equalToSuperview().offset(64)
-                maker.bottom.equalToSuperview().offset(view.frame.height-64)
-            }
+    private func setupConstraints() {
+        dimmedView.snp.makeConstraints{ (maker) in
+            maker.edges.equalToSuperview()
         }
+        containerView.snp.makeConstraints{ (maker) in
+            maker.horizontalEdges.equalToSuperview()
+            maker.height.equalToSuperview().offset(64)
+            maker.bottom.equalToSuperview().offset(view.frame.height-64)
+        }
+    }
     
-    func animatePresentContainer() {
+    private func animatePresentContainer() {
         UIView.animate(withDuration: 0.3) {
             self.containerView.snp.remakeConstraints{ (maker) in
                 maker.horizontalEdges.equalToSuperview()
@@ -83,14 +83,14 @@ class CustomModalViewController: UIViewController {
         }
     }
     
-    func animateShowDimmedView() {
+    private func animateShowDimmedView() {
         dimmedView.alpha = 0
         UIView.animate(withDuration: 0.4) {
             self.dimmedView.alpha = self.maxDimmedAlpha
         }
     }
     
-    func animateDismissView() {
+    private func animateDismissView() {
         UIView.animate(withDuration: 0.3) {
             self.containerView.snp.remakeConstraints{ (maker) in
                 maker.horizontalEdges.equalToSuperview()
