@@ -12,7 +12,8 @@ class ContactListPresenter: ContactListPresenterProtocol {
     weak var view: ContactListViewProtocol?
     var networkService: NetworkServiceProtocol!
     var router: RouterProtocol?
-    private var contactsThumbnailsDictStruct: ContactItemsAndThumbnailsDictionary = ContactItemsAndThumbnailsDictionary(dictionary: [:])
+    private var contactsThumbnailsDictStruct: ContactPresentationModelsDictionary = ContactPresentationModelsDictionary(dictionary: [:])
+    private var contactDomainModels: [ContactItem] = []
     
     init(view: ContactListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol) {
         self.view = view
@@ -28,9 +29,9 @@ class ContactListPresenter: ContactListPresenterProtocol {
             case .success:
                 guard let array = result.0 else { return }
                 for i in 0...array.count-1{
-                    self.getThumbnail(string: array[i].thumbnailString, contact: array[i])
+                    self.addToDict(contact: array[i], index: i)
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0, execute: {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 4.0, execute: {
                     self.view?.setViewControllerDataSource(self.contactsThumbnailsDictStruct.dictionary)
                     self.view?.setContentView()
                 })
@@ -38,16 +39,20 @@ class ContactListPresenter: ContactListPresenterProtocol {
         }
     }
     
-    private func getThumbnail(string: String, contact: ContactItem) {
-        networkService.requestImage(urlString: string){ result in
-            self.contactsThumbnailsDictStruct.dictionary[contact] = result
+    private func addToDict(contact: ContactItem, index: Int) {
+        contactDomainModels.append(contact)
+        let thumbnailString = contact.thumbnailString
+        networkService.requestImage(urlString: thumbnailString){ result in
+            let contactPresentationModel = ContactPresentationModel(fullname: contact.fullname, thumbnailData: result)
+            self.contactsThumbnailsDictStruct.dictionary[index] = contactPresentationModel
         }
     }
     
     func filterContacts(_ searchText: String) {
-        guard let contactListIsFiltered = view?.checkIfContactListIsFiltered() else { return }
+        guard let contactListIsFiltered = view?.checkIfContactListIsFiltered() else { return
+        }
         if contactListIsFiltered {
-            let filteredContacts = contactsThumbnailsDictStruct.dictionary.filter({ $0.key.fullname.lowercased().contains(searchText.lowercased())
+            let filteredContacts = contactsThumbnailsDictStruct.dictionary.filter({ $0.value.fullname.lowercased().contains(searchText.lowercased())
             })
             if filteredContacts.count == 0 {
                 view?.createNothingFoundLabel()
@@ -63,7 +68,8 @@ class ContactListPresenter: ContactListPresenterProtocol {
         }
     }
     
-    func openContact(_ contact: ContactItem) {
-        router?.openContact(contact: contact)
+    func openContact(index: Int) {
+        let contactDomainModel = contactDomainModels[index]
+        router?.openContact(contact: contactDomainModel)
     }
 }

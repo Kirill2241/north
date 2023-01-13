@@ -24,7 +24,7 @@ class ContactListViewController: UIViewController, ContactListViewProtocol {
         lbl.text = "По Вашему запросу ничего не найдено"
         return lbl
     }()
-    private var contactsDict: [ContactItem: Data?] = [:]
+    private var contactsDict: [Int: ContactPresentationModel] = [:]
     private var searchBarIsEmpty: Bool {
         guard let text = searchController.searchBar.text else { return false }
         return text.isEmpty
@@ -74,7 +74,7 @@ class ContactListViewController: UIViewController, ContactListViewProtocol {
         }
     }
     
-    func setViewControllerDataSource(_ source: [ContactItem : Data?]) {
+    func setViewControllerDataSource(_ source: [Int: ContactPresentationModel]) {
         contactsDict = source
     }
     
@@ -166,13 +166,11 @@ extension ContactListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ContactTableViewCell.reuseId, for: indexPath) as! ContactTableViewCell
-        let contactsArray =  Array(contactsDict.keys)
-        let contact = contactsArray[indexPath.row]
-        let fullname = contact.fullname
+        let contact = contactsDict[indexPath.row]
+        let fullname = contact?.fullname ?? "UNKNOWN USER"
         let errorImage = UIImage(named: "Error")!
         let errorImageData = errorImage.jpegData(compressionQuality: 1.0)!
-        let thumbnailsArray = Array(contactsDict.values)
-        let thumbnailData = thumbnailsArray[indexPath.row]
+        let thumbnailData = contact?.thumbnailData
         let thumbnail = UIImage(data: thumbnailData ?? errorImageData) ?? errorImage
         cell.configure(fullName: fullname, photo: thumbnail)
         return cell
@@ -186,9 +184,7 @@ extension ContactListViewController: UITableViewDataSource {
 extension ContactListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let indexPath = tableView.indexPathForSelectedRow {
-            let contactsArray = Array(contactsDict.keys)
-            let contact = contactsArray[indexPath.row]
-            presenter?.openContact(contact)
+            presenter?.openContact(index: indexPath.row)
         }
     }
 }

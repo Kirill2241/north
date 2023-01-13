@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct ContactItemsAndThumbnailsDictionary {
-    var dictionary: [ContactItem: Data?]
+struct ContactPresentationModelsDictionary {
+    var dictionary: [Int: ContactPresentationModel]
 }

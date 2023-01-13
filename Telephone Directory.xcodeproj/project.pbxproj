@@ -12,8 +12,9 @@
 		88A0AA85FF06E6717E611FAB /* Pods_Telephone_Directory_Telephone_DirectoryUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 976D76945A582FC3581F361A /* Pods_Telephone_Directory_Telephone_DirectoryUITests.framework */; };
 		EB4FC4A72954F00800A9F506 /* NetworkServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4FC4A62954F00800A9F506 /* NetworkServiceProtocol.swift */; };
 		EB4FC4AE2954F31100A9F506 /* ContactItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4FC4AD2954F31100A9F506 /* ContactItem.swift */; };
-		EB4FC4B4295C82CA00A9F506 /* ContactItemsAndThumbnailsDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4FC4B3295C82CA00A9F506 /* ContactItemsAndThumbnailsDictionary.swift */; };
+		EB4FC4B4295C82CA00A9F506 /* ContactPresentationModelsDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4FC4B3295C82CA00A9F506 /* ContactPresentationModelsDictionary.swift */; };
 		EB4FC4B829701B1A00A9F506 /* ContactListDownloadStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4FC4B729701B1A00A9F506 /* ContactListDownloadStatus.swift */; };
+		EB4FC4BA297081EF00A9F506 /* ContactPresentationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4FC4B9297081EF00A9F506 /* ContactPresentationModel.swift */; };
 		EB5AF7272950E35600AE4298 /* OneContactVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB5AF7262950E35600AE4298 /* OneContactVC.xib */; };
 		EBAB574E2937D63A00DCD66A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB574D2937D63A00DCD66A /* AppDelegate.swift */; };
 		EBAB57502937D63A00DCD66A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB574F2937D63A00DCD66A /* SceneDelegate.swift */; };
@@ -72,8 +73,9 @@
 		E252C1A0A54335DEDF11D1C6 /* Pods-Telephone DirectoryTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telephone DirectoryTests.debug.xcconfig"; path = "Target Support Files/Pods-Telephone DirectoryTests/Pods-Telephone DirectoryTests.debug.xcconfig"; sourceTree = "<group>"; };
 		EB4FC4A62954F00800A9F506 /* NetworkServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceProtocol.swift; sourceTree = "<group>"; };
 		EB4FC4AD2954F31100A9F506 /* ContactItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactItem.swift; sourceTree = "<group>"; };
-		EB4FC4B3295C82CA00A9F506 /* ContactItemsAndThumbnailsDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactItemsAndThumbnailsDictionary.swift; sourceTree = "<group>"; };
+		EB4FC4B3295C82CA00A9F506 /* ContactPresentationModelsDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactPresentationModelsDictionary.swift; sourceTree = "<group>"; };
 		EB4FC4B729701B1A00A9F506 /* ContactListDownloadStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListDownloadStatus.swift; sourceTree = "<group>"; };
+		EB4FC4B9297081EF00A9F506 /* ContactPresentationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactPresentationModel.swift; sourceTree = "<group>"; };
 		EB5AF7262950E35600AE4298 /* OneContactVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OneContactVC.xib; sourceTree = "<group>"; };
 		EBAB574A2937D63A00DCD66A /* Telephone Directory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Telephone Directory.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EBAB574D2937D63A00DCD66A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -152,7 +154,8 @@
 			isa = PBXGroup;
 			children = (
 				EB4FC4AD2954F31100A9F506 /* ContactItem.swift */,
-				EB4FC4B3295C82CA00A9F506 /* ContactItemsAndThumbnailsDictionary.swift */,
+				EB4FC4B9297081EF00A9F506 /* ContactPresentationModel.swift */,
+				EB4FC4B3295C82CA00A9F506 /* ContactPresentationModelsDictionary.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -594,10 +597,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				EBAB57A92940863000DCD66A /* ContactListViewProtocol.swift in Sources */,
+				EB4FC4BA297081EF00A9F506 /* ContactPresentationModel.swift in Sources */,
 				EB4FC4AE2954F31100A9F506 /* ContactItem.swift in Sources */,
 				EBAB578D2939160600DCD66A /* TelephoneDirectory.xcdatamodeld in Sources */,
 				EBAB57522937D63A00DCD66A /* OneContactViewController.swift in Sources */,
-				EB4FC4B4295C82CA00A9F506 /* ContactItemsAndThumbnailsDictionary.swift in Sources */,
+				EB4FC4B4295C82CA00A9F506 /* ContactPresentationModelsDictionary.swift in Sources */,
 				EBAB57862937D98200DCD66A /* ContactListViewController.swift in Sources */,
 				EBAB574E2937D63A00DCD66A /* AppDelegate.swift in Sources */,
 				EBAB57912939316900DCD66A /* HTTPError.swift in Sources */,

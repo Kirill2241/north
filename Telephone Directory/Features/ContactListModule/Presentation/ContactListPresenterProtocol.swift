@@ -11,5 +11,5 @@ import UIKit
 protocol ContactListPresenterProtocol {
     func tryRequest()
     func filterContacts(_ searchText: String)
-    func openContact(_ contact: ContactItem)
+    func openContact(index: Int)
 }

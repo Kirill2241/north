@@ -7,7 +7,7 @@
 import UIKit
 
 protocol ContactListViewProtocol: AnyObject {
-    func setViewControllerDataSource(_ source:[ContactItem: Data?])
+    func setViewControllerDataSource(_ source: [Int: ContactPresentationModel])
     func setContentView()
     func setRequestFailureView()
     func applyFilter()
