@@ -5,27 +5,27 @@
 //  Created by Diana Princess on 01.12.2022.
 //
 
-struct ContactModel: Codable {
-    var results: [ContactInstance]?
+struct ContactsNetworkResponse: Codable {
+    var results: [OneContactNetworkResponse]?
     var error: String?
 }
 
-struct ContactInstance: Codable{
-    var name: NameModel
+struct OneContactNetworkResponse: Codable{
+    var name: UserNameResponse
     var email: String
     var phone: String
     var cell: String
-    var picture: PictureOptions
+    var picture: PictureOptionsResponse
     var nat: String
 }
 
-struct NameModel: Codable {
+struct UserNameResponse: Codable {
     var title: String
     var first: String
     var last: String
 }
 
-struct PictureOptions: Codable {
+struct PictureOptionsResponse: Codable {
     var large: String
     var medium: String
     var thumbnail: String

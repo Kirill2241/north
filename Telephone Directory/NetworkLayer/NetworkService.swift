@@ -26,7 +26,7 @@ class NetworkService: NetworkServiceProtocol {
         return
     }
     
-    private func loadContactList(number: Int, completion: @escaping(Result<[ContactInstance]?, HTTPError>) -> Void) {
+    private func loadContactList(number: Int, completion: @escaping(Result<[OneContactNetworkResponse]?, HTTPError>) -> Void) {
         let urlString = "https://randomuser.me/api/?results=\(number)&inc=name,phone,cell,email,nat,picture"
         guard let url = URL(string: urlString) else { return }
         let request = URLRequest(url: url)
@@ -42,14 +42,14 @@ class NetworkService: NetworkServiceProtocol {
                     completion(.failure(HTTPError.httpError(status)))
                     return
                 }
-                let correctResponse: ContactModel? = try? JSONDecoder().decode(ContactModel.self, from: data!)
+                let correctResponse: ContactsNetworkResponse? = try? JSONDecoder().decode(ContactsNetworkResponse.self, from: data!)
                 let array = correctResponse?.results
                 completion(.success(array))
             }
         }.resume()
     }
     
-    private func createNewContactItem(contact: ContactInstance) -> ContactItem {
+    private func createNewContactItem(contact: OneContactNetworkResponse) -> ContactItem {
         let fullname = contact.name.first+" "+contact.name.last
         let largeImageStr = contact.picture.large
         return ContactItem(fullname: fullname, email: contact.email, phone: contact.phone, cell: contact.cell, largeImageStr: largeImageStr, nat: contact.nat, thumbnailString: contact.picture.thumbnail)

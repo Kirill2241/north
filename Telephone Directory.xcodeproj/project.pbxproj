@@ -32,7 +32,7 @@
 		EBAB57862937D98200DCD66A /* ContactListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57852937D98200DCD66A /* ContactListViewController.swift */; };
 		EBAB578A2937E09B00DCD66A /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57892937E09B00DCD66A /* ContactTableViewCell.swift */; };
 		EBAB578D2939160600DCD66A /* TelephoneDirectory.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EBAB578B2939160600DCD66A /* TelephoneDirectory.xcdatamodeld */; };
-		EBAB578F2939174C00DCD66A /* ContactModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB578E2939174C00DCD66A /* ContactModel.swift */; };
+		EBAB578F2939174C00DCD66A /* ContactsNetworkResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB578E2939174C00DCD66A /* ContactsNetworkResponse.swift */; };
 		EBAB57912939316900DCD66A /* HTTPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57902939316900DCD66A /* HTTPError.swift */; };
 		EBAB5793293A085700DCD66A /* OneContactPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB5792293A085700DCD66A /* OneContactPresenter.swift */; };
 		EBAB57A32940858300DCD66A /* RouterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57A22940858300DCD66A /* RouterProtocol.swift */; };
@@ -97,7 +97,7 @@
 		EBAB57852937D98200DCD66A /* ContactListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListViewController.swift; sourceTree = "<group>"; };
 		EBAB57892937E09B00DCD66A /* ContactTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactTableViewCell.swift; sourceTree = "<group>"; };
 		EBAB578C2939160600DCD66A /* TelephoneDirectory.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TelephoneDirectory.xcdatamodel; sourceTree = "<group>"; };
-		EBAB578E2939174C00DCD66A /* ContactModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactModel.swift; sourceTree = "<group>"; };
+		EBAB578E2939174C00DCD66A /* ContactsNetworkResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsNetworkResponse.swift; sourceTree = "<group>"; };
 		EBAB57902939316900DCD66A /* HTTPError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPError.swift; sourceTree = "<group>"; };
 		EBAB5792293A085700DCD66A /* OneContactPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneContactPresenter.swift; sourceTree = "<group>"; };
 		EBAB57A22940858300DCD66A /* RouterProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterProtocol.swift; sourceTree = "<group>"; };
@@ -316,7 +316,7 @@
 				EBAB57832937D91B00DCD66A /* NetworkService.swift */,
 				EB4FC4A62954F00800A9F506 /* NetworkServiceProtocol.swift */,
 				EB4FC4B729701B1A00A9F506 /* ContactListDownloadStatus.swift */,
-				EBAB578E2939174C00DCD66A /* ContactModel.swift */,
+				EBAB578E2939174C00DCD66A /* ContactsNetworkResponse.swift */,
 			);
 			path = NetworkLayer;
 			sourceTree = "<group>";
@@ -620,7 +620,7 @@
 				EBAB57822937D8C300DCD66A /* ContactListPresenter.swift in Sources */,
 				EBAB57AD294086D100DCD66A /* OneContactPresenterProtocol.swift in Sources */,
 				EBAB57842937D91B00DCD66A /* NetworkService.swift in Sources */,
-				EBAB578F2939174C00DCD66A /* ContactModel.swift in Sources */,
+				EBAB578F2939174C00DCD66A /* ContactsNetworkResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
