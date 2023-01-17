@@ -7,26 +7,9 @@
 
 import Foundation
 
-class NetworkService: NetworkServiceProtocol {
+class NetworkService {
     
-    func prepareNetworkResponseForPresentation(number: Int, completion: @escaping(([ContactItem]?, ContactListDownloadStatus)) -> Void) {
-            self.loadContactList(number: number){ (result) in
-                    switch result {
-                    case .success(let result):
-                        var contactItemsArray: [ContactItem] = []
-                        guard let result = result else { return }
-                        for i in 0...result.count-1{
-                            contactItemsArray.append(self.createNewContactItem(contact: result[i]))
-                        }
-                        completion((contactItemsArray, .success))
-                    case .failure(_):
-                        completion((nil, .failure))
-                }
-            }
-        return
-    }
-    
-    private func loadContactList(number: Int, completion: @escaping(Result<[OneContactNetworkResponse]?, HTTPError>) -> Void) {
+    private func loadContactList(number: Int, completion: @escaping(Result<[OneContactNetworkResponse], Error>) -> Void) {
         let urlString = "https://randomuser.me/api/?results=\(number)&inc=name,phone,cell,email,nat,picture"
         guard let url = URL(string: urlString) else { return }
         let request = URLRequest(url: url)
@@ -43,7 +26,10 @@ class NetworkService: NetworkServiceProtocol {
                     return
                 }
                 let correctResponse: ContactsNetworkResponse? = try? JSONDecoder().decode(ContactsNetworkResponse.self, from: data!)
-                let array = correctResponse?.results
+                guard let array = correctResponse?.results else {
+                    completion(.failure(HTTPError.httpError(0)))
+                    return
+                }
                 completion(.success(array))
             }
         }.resume()
@@ -53,19 +39,6 @@ class NetworkService: NetworkServiceProtocol {
         let fullname = contact.name.first+" "+contact.name.last
         let largeImageStr = contact.picture.large
         return ContactItem(fullname: fullname, email: contact.email, phone: contact.phone, cell: contact.cell, largeImageStr: largeImageStr, nat: contact.nat, thumbnailString: contact.picture.thumbnail)
-    }
-    
-    func requestImage(urlString: String, completion: @escaping(Data?) -> Void) {
-        loadImage(from: urlString) { result in
-            switch result {
-            case .success(let data):
-                completion(data)
-                return
-            case .failure(_):
-                completion(nil)
-                return
-            }
-        }
     }
     
     private func loadImage(from text: String, completion: @escaping(Result<Data?, HTTPError>) -> Void) {
@@ -87,6 +60,39 @@ class NetworkService: NetworkServiceProtocol {
                 completion(.success(correctResponse))
             }
         }.resume()
+    }
+    
+}
+
+extension NetworkService: NetworkServiceProtocol{
+    
+    func fetchContactList(number: Int, completion: @escaping(Result<[ContactItem], Error>) -> Void) {
+            self.loadContactList(number: number){ (result) in
+                    switch result {
+                    case .success(let result):
+                        let contactItemsArray = result.map{
+                            self.createNewContactItem(contact: $0)
+                        }
+                        completion(.success(contactItemsArray))
+                    case .failure(let error):
+                        completion(.failure(error))
+                }
+            }
+        return
+    }
+    
+    func requestImage(urlString: String, completion: @escaping(Result<Data, Error>) -> Void) {
+        loadImage(from: urlString) { result in
+            switch result {
+            case .success(let data):
+                guard let data = data else { return }
+                completion(.success(data))
+                return
+            case .failure(let error):
+                completion(.failure(error))
+                return
+            }
+        }
     }
     
 }

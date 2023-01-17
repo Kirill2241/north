@@ -7,44 +7,55 @@
 
 import Foundation
 
-class ContactListPresenter: ContactListPresenterProtocol {
+class ContactListPresenter {
     
-    weak var view: ContactListViewProtocol?
-    var networkService: NetworkServiceProtocol!
-    var router: RouterProtocol?
-    private var contactsThumbnailsDictStruct: ContactPresentationModelsDictionary = ContactPresentationModelsDictionary(dictionary: [:])
-    private var contactDomainModels: [ContactItem] = []
-    
+    private weak var view: ContactListViewProtocol?
+    private var networkService: NetworkServiceProtocol!
+    private var router: RouterProtocol?
+    private var presentationModelsArray: [ContactPresentationModel] = []
+    private var domainModelsDict: [String: ContactItem] = [:]
     init(view: ContactListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol) {
         self.view = view
         self.networkService = networkService
         self.router = router
     }
     
-    func tryRequest() {
-        networkService.prepareNetworkResponseForPresentation(number: 1000) { result in
-            switch result.1{
-            case .failure:
-                self.view?.setRequestFailureView()
-            case .success:
-                guard let array = result.0 else { return }
-                for i in 0...array.count-1{
-                    self.addToDict(contact: array[i], index: i)
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 4.0, execute: {
-                    self.view?.setViewControllerDataSource(self.contactsThumbnailsDictStruct.dictionary)
-                    self.view?.setContentView()
-                })
+    private func addToDictAndArray(contact: ContactItem, id: String) {
+        let thumbnailString = contact.thumbnailString
+        self.domainModelsDict[id] = contact
+        networkService.requestImage(urlString: thumbnailString){ result in
+            switch result {
+            case .success(let success):
+                let contactPresentationModel = ContactPresentationModel(fullname: contact.fullname, thumbnailData: success, id: id)
+                self.presentationModelsArray.append(contactPresentationModel)
+            case .failure(_):
+                let contactPresentationModel = ContactPresentationModel(fullname: contact.fullname, thumbnailData: nil, id: id)
+                self.presentationModelsArray.append(contactPresentationModel)
             }
         }
     }
     
-    private func addToDict(contact: ContactItem, index: Int) {
-        contactDomainModels.append(contact)
-        let thumbnailString = contact.thumbnailString
-        networkService.requestImage(urlString: thumbnailString){ result in
-            let contactPresentationModel = ContactPresentationModel(fullname: contact.fullname, thumbnailData: result)
-            self.contactsThumbnailsDictStruct.dictionary[index] = contactPresentationModel
+    
+}
+
+extension ContactListPresenter: ContactListPresenterProtocol {
+    
+    func tryRequest() {
+        networkService.fetchContactList(number: 1000) { result in
+            switch result {
+            case .success(let success):
+                for contactItem in success{
+                    let id = UUID().uuidString
+                    self.addToDictAndArray(contact: contactItem, id: id)
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 4.0, execute: {
+                    self.view?.updateContactList(self.presentationModelsArray)
+                })
+            case .failure(_):
+                DispatchQueue.main.async {
+                    self.view?.setRequestFailureView()
+                }
+            }
         }
     }
     
@@ -52,24 +63,20 @@ class ContactListPresenter: ContactListPresenterProtocol {
         guard let contactListIsFiltered = view?.checkIfContactListIsFiltered() else { return
         }
         if contactListIsFiltered {
-            let filteredContacts = contactsThumbnailsDictStruct.dictionary.filter({ $0.value.fullname.lowercased().contains(searchText.lowercased())
+            let filteredContacts = presentationModelsArray.filter({ $0.fullname.lowercased().contains(searchText.lowercased())
             })
-            if filteredContacts.count == 0 {
-                view?.createNothingFoundLabel()
-            } else {
-                view?.removeNothingFoundLabel()
+            DispatchQueue.main.async {
+                self.view?.updateContactList(filteredContacts)
             }
-            view?.setViewControllerDataSource(filteredContacts)
-            view?.applyFilter()
         } else {
-            view?.setViewControllerDataSource(contactsThumbnailsDictStruct.dictionary)
-            view?.removeNothingFoundLabel()
-            view?.applyFilter()
+            DispatchQueue.main.async {
+                self.view?.updateContactList(self.presentationModelsArray)
+            }
         }
     }
     
-    func openContact(index: Int) {
-        let contactDomainModel = contactDomainModels[index]
+    func openContact(id: String) {
+        guard let contactDomainModel = domainModelsDict[id] else { return }
         router?.openContact(contact: contactDomainModel)
     }
 }

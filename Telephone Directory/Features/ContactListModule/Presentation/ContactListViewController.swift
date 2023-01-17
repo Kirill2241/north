@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class ContactListViewController: UIViewController, ContactListViewProtocol {
+class ContactListViewController: UIViewController {
     
     var presenter: ContactListPresenterProtocol?
     private let tableView = UITableView(frame: .zero)
@@ -24,7 +24,7 @@ class ContactListViewController: UIViewController, ContactListViewProtocol {
         lbl.text = "По Вашему запросу ничего не найдено"
         return lbl
     }()
-    private var contactsDict: [Int: ContactPresentationModel] = [:]
+    private var contactList: [ContactPresentationModel] = []
     private var searchBarIsEmpty: Bool {
         guard let text = searchController.searchBar.text else { return false }
         return text.isEmpty
@@ -38,19 +38,16 @@ class ContactListViewController: UIViewController, ContactListViewProtocol {
     }
     
     private func initialConfig() {
-        DispatchQueue.main.async {
-            if !self.view.subviews.isEmpty{
-                self.view.subviews.forEach({$0.removeFromSuperview()})
-            }
-            self.activityIndicator.hidesWhenStopped = true
-            self.view.addSubview(self.activityIndicator)
-            self.activityIndicator.snp.makeConstraints{ (maker) in
-                maker.centerX.equalToSuperview()
-                maker.centerY.equalToSuperview()
-            }
-            self.activityIndicator.startAnimating()
+        if !view.subviews.isEmpty{
+            view.subviews.forEach({$0.removeFromSuperview()})
         }
-        
+        activityIndicator.hidesWhenStopped = true
+        view.addSubview(activityIndicator)
+        activityIndicator.snp.makeConstraints{ (maker) in
+            maker.centerX.equalToSuperview()
+            maker.centerY.equalToSuperview()
+        }
+        activityIndicator.startAnimating()
     }
     
     private func configureViews() {
@@ -59,7 +56,7 @@ class ContactListViewController: UIViewController, ContactListViewProtocol {
         tableView.delegate = self
         view.addSubview(tableView)
         searchController.searchResultsUpdater = self
-        searchController.obscuresBackgroundDuringPresentation = true
+        searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Поиск контактов"
         navigationController?.navigationBar.barTintColor = UIColor.white
         navigationController?.navigationBar.backgroundColor = UIColor.white
@@ -74,50 +71,31 @@ class ContactListViewController: UIViewController, ContactListViewProtocol {
         }
     }
     
-    func setViewControllerDataSource(_ source: [Int: ContactPresentationModel]) {
-        contactsDict = source
-    }
-    
-    func setContentView() {
-        DispatchQueue.main.async {
-            if self.activityIndicator.isAnimating{
-                self.activityIndicator.stopAnimating()
-            }
-            self.configureViews()
-            self.setUpConstraints()
-            self.tableView.reloadData()
+    private func setContentView() {
+        if activityIndicator.isAnimating{
+            activityIndicator.stopAnimating()
+        }
+        if tableView.superview == nil{
+            configureViews()
+            setUpConstraints()
+        } else {
+            checkIfNothingFound()
         }
     }
     
-    
-    func setRequestFailureView(){
-        DispatchQueue.main.async {
-            if self.activityIndicator.isAnimating{
-                self.activityIndicator.stopAnimating()
-            }
-            let alert = UIAlertController(title: "При выполнении запроса произошла ошибка", message: "Пожалуйста, проверьте подключение и повторите попытку", preferredStyle: UIAlertController.Style.alert)
-            alert.addAction(UIAlertAction(title: "Повторить попытку", style: UIAlertAction.Style.default){ _ in
-                self.retryRequest()
-            })
-            self.present(alert, animated: true, completion: nil)
+    private func checkIfNothingFound() {
+        if contactList.count == 0{
+            createNothingFoundLabel()
+        } else {
+            removeNothingFoundLabel()
         }
     }
     
-    func checkIfContactListIsFiltered() -> Bool {
-        return searchController.isActive && !searchBarIsEmpty
-    }
-    
-    func applyFilter() {
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
-    }
-    
-    func createNothingFoundLabel() {
-        DispatchQueue.main.async {
-            self.tableView.isHidden = true
-            self.view.addSubview(self.nothingFoundLabel)
-            self.nothingFoundLabel.snp.makeConstraints{ (maker) in
+    private func createNothingFoundLabel() {
+        if nothingFoundLabel.superview == nil {
+            tableView.isHidden = true
+            view.addSubview(self.nothingFoundLabel)
+            nothingFoundLabel.snp.makeConstraints{ (maker) in
                 maker.centerX.centerY.equalToSuperview()
                 maker.leading.equalToSuperview().offset(30)
                 maker.trailing.equalToSuperview().inset(30)
@@ -126,12 +104,10 @@ class ContactListViewController: UIViewController, ContactListViewProtocol {
         }
     }
     
-    func removeNothingFoundLabel() {
-        DispatchQueue.main.async {
-            if self.view.subviews.contains(self.nothingFoundLabel){
-                self.nothingFoundLabel.removeFromSuperview()
-                self.tableView.isHidden = false
-            }
+    private func removeNothingFoundLabel() {
+        if nothingFoundLabel.superview != nil {
+            nothingFoundLabel.removeFromSuperview()
+            tableView.isHidden = false
         }
     }
     
@@ -151,6 +127,30 @@ class ContactListViewController: UIViewController, ContactListViewProtocol {
 
 }
 
+extension ContactListViewController: ContactListViewProtocol {
+    
+    func updateContactList(_ list: [ContactPresentationModel]) {
+        contactList = list
+        setContentView()
+        tableView.reloadData()
+    }
+    
+    func setRequestFailureView(){
+        if activityIndicator.isAnimating{
+            activityIndicator.stopAnimating()
+        }
+        let alert = UIAlertController(title: "При выполнении запроса произошла ошибка", message: "Пожалуйста, проверьте подключение и повторите попытку", preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "Повторить попытку", style: UIAlertAction.Style.default){ _ in
+            self.retryRequest()
+        })
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func checkIfContactListIsFiltered() -> Bool {
+        return searchController.isActive && !searchBarIsEmpty
+    }
+}
+
 extension ContactListViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         if searchController.searchBar.text != nil {
@@ -161,16 +161,16 @@ extension ContactListViewController: UISearchResultsUpdating {
 
 extension ContactListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return contactsDict.count
+        return contactList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ContactTableViewCell.reuseId, for: indexPath) as! ContactTableViewCell
-        let contact = contactsDict[indexPath.row]
-        let fullname = contact?.fullname ?? "UNKNOWN USER"
+        let contact = contactList[indexPath.row]
+        let fullname = contact.fullname
         let errorImage = UIImage(named: "Error")!
         let errorImageData = errorImage.jpegData(compressionQuality: 1.0)!
-        let thumbnailData = contact?.thumbnailData
+        let thumbnailData = contact.thumbnailData
         let thumbnail = UIImage(data: thumbnailData ?? errorImageData) ?? errorImage
         cell.configure(fullName: fullname, photo: thumbnail)
         return cell
@@ -184,7 +184,9 @@ extension ContactListViewController: UITableViewDataSource {
 extension ContactListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let indexPath = tableView.indexPathForSelectedRow {
-            presenter?.openContact(index: indexPath.row)
+            let contactPresentationModel = contactList[indexPath.row]
+            let id = contactPresentationModel.id
+            presenter?.openContact(id: id)
         }
     }
 }

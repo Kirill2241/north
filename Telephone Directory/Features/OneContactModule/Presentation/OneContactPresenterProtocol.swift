@@ -9,4 +9,5 @@ import Foundation
 
 protocol OneContactPresenterProtocol: AnyObject {
     func requestImage()
+    func attemptReload()
 }

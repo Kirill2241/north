@@ -8,6 +8,6 @@
 import Foundation
 
 protocol NetworkServiceProtocol {
-    func requestImage(urlString: String, completion: @escaping(Data?) -> Void)
-    func prepareNetworkResponseForPresentation(number: Int, completion: @escaping(([ContactItem]?, ContactListDownloadStatus)) -> Void)
+    func requestImage(urlString: String, completion: @escaping(Result<Data, Error>) -> Void)
+    func fetchContactList(number: Int, completion: @escaping(Result<[ContactItem], Error>) -> Void)
 }

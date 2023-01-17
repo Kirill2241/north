@@ -10,4 +10,5 @@ import Foundation
 struct ContactPresentationModel {
     let fullname: String
     let thumbnailData: Data?
+    let id: String
 }

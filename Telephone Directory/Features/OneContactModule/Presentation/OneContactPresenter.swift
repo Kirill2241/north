@@ -7,11 +7,12 @@
 
 import Foundation
 
-class OneContactPresenter: OneContactPresenterProtocol {
-    weak var view: OneContactViewProtocol?
-    var networkService: NetworkServiceProtocol!
-    var router: RouterProtocol?
+class OneContactPresenter {
+    private weak var view: OneContactViewProtocol?
+    private var networkService: NetworkServiceProtocol!
+    private var router: RouterProtocol?
     private var largeImgString: String = ""
+    private let contactItem: ContactItem?
     private let countryCodes: [String: String] = [
         "AU": "61",
         "BR": "55",
@@ -41,7 +42,7 @@ class OneContactPresenter: OneContactPresenterProtocol {
         self.networkService = networkService
         self.router = router
         self.largeImgString = contact.largeImageStr
-        presentContactInfo(contact: contact)
+        self.contactItem = contact
     }
     
     private func presentContactInfo(contact: ContactItem) {
@@ -53,12 +54,27 @@ class OneContactPresenter: OneContactPresenterProtocol {
         view?.reloadView(fullName: contact.fullname, phone: fullPhone, cell: fullCell, email: contact.email)
     }
     
+    
+}
+
+extension OneContactPresenter: OneContactPresenterProtocol {
+    
+    func attemptReload() {
+        guard let contact = contactItem else { return }
+        presentContactInfo(contact: contact)
+    }
+    
     func requestImage() {
         networkService.requestImage(urlString: largeImgString){ result in
-            if result == nil {
-                self.view?.setRequestFailureView()
-            } else {
-                self.view?.setImage(data: result!)
+            switch result {
+            case .success(let success):
+                DispatchQueue.main.async {
+                    self.view?.setImage(data: success)
+                }
+            case .failure(_):
+                DispatchQueue.main.async {
+                    self.view?.setRequestFailureView()
+                }
             }
         }
     }
