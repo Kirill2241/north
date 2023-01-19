@@ -12,71 +12,97 @@ class ContactListPresenter {
     private weak var view: ContactListViewProtocol?
     private var networkService: NetworkServiceProtocol!
     private var router: RouterProtocol?
-    private var presentationModelsArray: [ContactPresentationModel] = []
-    private var domainModelsDict: [String: ContactItem] = [:]
     init(view: ContactListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol) {
         self.view = view
         self.networkService = networkService
         self.router = router
     }
     
-    private func addToDictAndArray(contact: ContactItem, id: String) {
-        let thumbnailString = contact.thumbnailString
-        self.domainModelsDict[id] = contact
-        networkService.requestImage(urlString: thumbnailString){ result in
-            switch result {
-            case .success(let success):
-                let contactPresentationModel = ContactPresentationModel(fullname: contact.fullname, thumbnailData: success, id: id)
-                self.presentationModelsArray.append(contactPresentationModel)
-            case .failure(_):
-                let contactPresentationModel = ContactPresentationModel(fullname: contact.fullname, thumbnailData: nil, id: id)
-                self.presentationModelsArray.append(contactPresentationModel)
+    private func createDataForStorage(_ contacts: [ContactItem]) -> ([ContactPresentationModel], [String: ContactItem]) {
+        var contactList: [ContactPresentationModel] = []
+        var contactsDict: [String: ContactItem] = [:]
+        for contact in contacts{
+            let thumbnailString = contact.thumbnailString
+            let id = UUID().uuidString
+            networkService.requestImage(urlString: thumbnailString){ result in
+                switch result {
+                case .success(let success):
+                    let contactPresentationModel = ContactPresentationModel(fullname: contact.fullname, thumbnailData: success, id: id)
+                    contactList.append(contactPresentationModel)
+                case .failure(_):
+                    let contactPresentationModel = ContactPresentationModel(fullname: contact.fullname, thumbnailData: nil, id: id)
+                    contactList.append(contactPresentationModel)
+                }
+            }
+            contactsDict[id] = contact
+        }
+        return (contactList, contactsDict)
+    }
+    
+    private func updateUI(state: ContactListViewState){
+        switch state {
+        case .loading:
+            DispatchQueue.main.async {
+                self.view?.isLoading(true)
+            }
+        case .error(let error):
+            DispatchQueue.main.async {
+                self.view?.isLoading(false)
+                self.view?.setRequestFailureView(error: error)
+            }
+        case .downloaded(let contactListDataStorage):
+            DispatchQueue.main.async {
+                self.view?.isLoading(false)
+                switch contactListDataStorage.contactListStatus{
+                case .complete:
+                    self.view?.updateContactList(contactListDataStorage.getFullArray())
+                case .filtered(let filterer):
+                    self.view?.updateContactList(filterer.filteredContacts)
+                }
             }
         }
     }
-    
     
 }
 
 extension ContactListPresenter: ContactListPresenterProtocol {
     
     func tryRequest() {
+        updateUI(state: ContactListViewState.loading)
         networkService.fetchContactList(number: 1000) { result in
             switch result {
             case .success(let success):
-                for contactItem in success{
-                    let id = UUID().uuidString
-                    self.addToDictAndArray(contact: contactItem, id: id)
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 4.0, execute: {
-                    self.view?.updateContactList(self.presentationModelsArray)
+                let contactsInfo = self.createDataForStorage(success)
+                let dataStorage = ContactListDataStorage.shared
+                dataStorage.setDataStorageIfEmpty(contactsInfo.0, contactsInfo.1)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 7.0, execute: {
+                    let state = ContactListViewState.downloaded(dataStorage)
+                    self.updateUI(state: state)
                 })
-            case .failure(_):
-                DispatchQueue.main.async {
-                    self.view?.setRequestFailureView()
-                }
+            case .failure(let error):
+                let state = ContactListViewState.error(error)
+                self.updateUI(state: state)
             }
         }
     }
     
-    func filterContacts(_ searchText: String) {
-        guard let contactListIsFiltered = view?.checkIfContactListIsFiltered() else { return
-        }
-        if contactListIsFiltered {
-            let filteredContacts = presentationModelsArray.filter({ $0.fullname.lowercased().contains(searchText.lowercased())
-            })
-            DispatchQueue.main.async {
-                self.view?.updateContactList(filteredContacts)
-            }
+    func filterContacts(_ searchText: String, listIsFiltered: Bool) {
+        let contactListDataStorage = ContactListDataStorage.shared
+        if listIsFiltered {
+            let contactFilterer = ContactListFilterer(searchText: searchText, filteredContacts: contactListDataStorage.filterContactList(searchText))
+            contactListDataStorage.contactListStatus = .filtered(contactFilterer)
+            let state = ContactListViewState.downloaded(contactListDataStorage)
+            updateUI(state: state)
         } else {
-            DispatchQueue.main.async {
-                self.view?.updateContactList(self.presentationModelsArray)
-            }
+            contactListDataStorage.contactListStatus = .complete
+            let state = ContactListViewState.downloaded(contactListDataStorage)
+            updateUI(state: state)
         }
     }
     
     func openContact(id: String) {
-        guard let contactDomainModel = domainModelsDict[id] else { return }
-        router?.openContact(contact: contactDomainModel)
+        let contactListDataStorage = ContactListDataStorage.shared
+        guard let contactItem = contactListDataStorage.getAContactDomainModelByID(id: id) else { return }
+        router?.openContact(contact: contactItem)
     }
 }

@@ -10,6 +10,6 @@ import UIKit
 
 protocol ContactListPresenterProtocol {
     func tryRequest()
-    func filterContacts(_ searchText: String)
+    func filterContacts(_ searchText: String, listIsFiltered: Bool)
     func openContact(id: String)
 }

@@ -8,6 +8,6 @@ import UIKit
 
 protocol ContactListViewProtocol: AnyObject {
     func updateContactList(_ list: [ContactPresentationModel])
-    func setRequestFailureView()
-    func checkIfContactListIsFiltered() -> Bool
+    func setRequestFailureView(error: Error)
+    func isLoading(_ bool: Bool)
 }

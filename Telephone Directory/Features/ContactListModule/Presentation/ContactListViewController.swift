@@ -32,22 +32,9 @@ class ContactListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
-        initialConfig()
+        configureViews()
         presenter?.tryRequest()
         // Do any additional setup after loading the view.
-    }
-    
-    private func initialConfig() {
-        if !view.subviews.isEmpty{
-            view.subviews.forEach({$0.removeFromSuperview()})
-        }
-        activityIndicator.hidesWhenStopped = true
-        view.addSubview(activityIndicator)
-        activityIndicator.snp.makeConstraints{ (maker) in
-            maker.centerX.equalToSuperview()
-            maker.centerY.equalToSuperview()
-        }
-        activityIndicator.startAnimating()
     }
     
     private func configureViews() {
@@ -55,6 +42,24 @@ class ContactListViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         view.addSubview(tableView)
+        tableView.snp.makeConstraints{ (maker) in
+            maker.top.leading.trailing.bottom.equalToSuperview()
+        }
+        tableView.isHidden = true
+        activityIndicator.hidesWhenStopped = true
+        view.addSubview(activityIndicator)
+        activityIndicator.snp.makeConstraints{ (maker) in
+            maker.centerX.equalToSuperview()
+            maker.centerY.equalToSuperview()
+        }
+        view.addSubview(nothingFoundLabel)
+        nothingFoundLabel.snp.makeConstraints{ (maker) in
+            maker.centerX.centerY.equalToSuperview()
+            maker.leading.equalToSuperview().offset(30)
+            maker.trailing.equalToSuperview().inset(30)
+            maker.height.equalTo(50)
+        }
+        nothingFoundLabel.isHidden = true
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Поиск контактов"
@@ -63,56 +68,10 @@ class ContactListViewController: UIViewController {
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
-    }
-    
-    private func setUpConstraints() {
-        tableView.snp.makeConstraints{ (maker) in
-            maker.top.leading.trailing.bottom.equalToSuperview()
-        }
-    }
-    
-    private func setContentView() {
-        if activityIndicator.isAnimating{
-            activityIndicator.stopAnimating()
-        }
-        if tableView.superview == nil{
-            configureViews()
-            setUpConstraints()
-        } else {
-            checkIfNothingFound()
-        }
-    }
-    
-    private func checkIfNothingFound() {
-        if contactList.count == 0{
-            createNothingFoundLabel()
-        } else {
-            removeNothingFoundLabel()
-        }
-    }
-    
-    private func createNothingFoundLabel() {
-        if nothingFoundLabel.superview == nil {
-            tableView.isHidden = true
-            view.addSubview(self.nothingFoundLabel)
-            nothingFoundLabel.snp.makeConstraints{ (maker) in
-                maker.centerX.centerY.equalToSuperview()
-                maker.leading.equalToSuperview().offset(30)
-                maker.trailing.equalToSuperview().inset(30)
-                maker.height.equalTo(50)
-            }
-        }
-    }
-    
-    private func removeNothingFoundLabel() {
-        if nothingFoundLabel.superview != nil {
-            nothingFoundLabel.removeFromSuperview()
-            tableView.isHidden = false
-        }
+        navigationController?.navigationBar.isHidden = true
     }
     
     private func retryRequest() {
-        initialConfig()
         presenter?.tryRequest()
     }
     
@@ -131,30 +90,42 @@ extension ContactListViewController: ContactListViewProtocol {
     
     func updateContactList(_ list: [ContactPresentationModel]) {
         contactList = list
-        setContentView()
-        tableView.reloadData()
+        if list.count == 0 {
+            nothingFoundLabel.isHidden = false
+            tableView.isHidden = true
+        } else {
+            nothingFoundLabel.isHidden = true
+            tableView.isHidden = false
+            navigationController?.navigationBar.isHidden = false
+            tableView.reloadData()
+        }
     }
     
-    func setRequestFailureView(){
-        if activityIndicator.isAnimating{
-            activityIndicator.stopAnimating()
-        }
-        let alert = UIAlertController(title: "При выполнении запроса произошла ошибка", message: "Пожалуйста, проверьте подключение и повторите попытку", preferredStyle: UIAlertController.Style.alert)
+    func setRequestFailureView(error: Error){
+        let alert = UIAlertController(title: "При выполнении запроса произошла ошибка", message: "Пожалуйста, проверьте подключение. Ошибка: "+error.localizedDescription, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "Повторить попытку", style: UIAlertAction.Style.default){ _ in
             self.retryRequest()
         })
         self.present(alert, animated: true, completion: nil)
     }
     
-    func checkIfContactListIsFiltered() -> Bool {
-        return searchController.isActive && !searchBarIsEmpty
+    func isLoading(_ bool: Bool) {
+        if bool {
+            activityIndicator.startAnimating()
+        } else {
+            if activityIndicator.isAnimating{
+                activityIndicator.stopAnimating()
+            }
+        }
     }
+    
 }
 
 extension ContactListViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         if searchController.searchBar.text != nil {
-            presenter?.filterContacts(searchController.searchBar.text!)
+            let listIsFiltered = searchController.isActive && !searchBarIsEmpty
+            presenter?.filterContacts(searchController.searchBar.text!, listIsFiltered: listIsFiltered)
         }
     }
 }
