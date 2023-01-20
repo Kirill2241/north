@@ -19,11 +19,13 @@ class ContactListPresenter {
     }
     
     private func createDataForStorage(_ contacts: [ContactItem]) -> ([ContactPresentationModel], [String: ContactItem]) {
+        let group = DispatchGroup()
         var contactList: [ContactPresentationModel] = []
         var contactsDict: [String: ContactItem] = [:]
         for contact in contacts{
             let thumbnailString = contact.thumbnailString
             let id = UUID().uuidString
+            group.enter()
             networkService.requestImage(urlString: thumbnailString){ result in
                 switch result {
                 case .success(let success):
@@ -33,7 +35,9 @@ class ContactListPresenter {
                     let contactPresentationModel = ContactPresentationModel(fullname: contact.fullname, thumbnailData: nil, id: id)
                     contactList.append(contactPresentationModel)
                 }
+                group.leave()
             }
+            group.wait()
             contactsDict[id] = contact
         }
         return (contactList, contactsDict)
@@ -72,13 +76,15 @@ extension ContactListPresenter: ContactListPresenterProtocol {
         networkService.fetchContactList(number: 1000) { result in
             switch result {
             case .success(let success):
-                let contactsInfo = self.createDataForStorage(success)
-                let dataStorage = ContactListDataStorage.shared
-                dataStorage.setDataStorageIfEmpty(contactsInfo.0, contactsInfo.1)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 7.0, execute: {
-                    let state = ContactListViewState.downloaded(dataStorage)
-                    self.updateUI(state: state)
-                })
+                DispatchQueue.global(qos: .userInitiated).async {
+                    var contactsInfo = self.createDataForStorage(success)
+                    let dataStorage = ContactListDataStorage.shared
+                    dataStorage.setDataStorageIfEmpty(contactsInfo.0, contactsInfo.1)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 7.0, execute: {
+                        let state = ContactListViewState.downloaded(dataStorage)
+                        self.updateUI(state: state)
+                    })
+                }
             case .failure(let error):
                 let state = ContactListViewState.error(error)
                 self.updateUI(state: state)
