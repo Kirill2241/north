@@ -7,8 +7,9 @@
 
 import Foundation
 
-struct ContactPresentationModel {
+struct ContactPresentationModel: Hashable {
     let fullname: String
+    let thumbnailString: String
     let thumbnailData: Data?
     let id: String
 }

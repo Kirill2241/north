@@ -12,32 +12,23 @@ class ContactListPresenter {
     private weak var view: ContactListViewProtocol?
     private var networkService: NetworkServiceProtocol!
     private var router: RouterProtocol?
-    init(view: ContactListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol) {
+    private var dataProviderService: ContactListDataProviderProtocol!
+    private var dataCache: DataCacheTypeProtocol
+    init(view: ContactListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol, dataProviderService: ContactListDataProviderProtocol, dataCache: DataCacheTypeProtocol) {
         self.view = view
         self.networkService = networkService
         self.router = router
+        self.dataProviderService = dataProviderService
+        self.dataCache = dataCache
     }
     
     private func createDataForStorage(_ contacts: [ContactItem]) -> ([ContactPresentationModel], [String: ContactItem]) {
-        let group = DispatchGroup()
         var contactList: [ContactPresentationModel] = []
         var contactsDict: [String: ContactItem] = [:]
         for contact in contacts{
-            let thumbnailString = contact.thumbnailString
             let id = UUID().uuidString
-            group.enter()
-            networkService.requestImage(urlString: thumbnailString){ result in
-                switch result {
-                case .success(let success):
-                    let contactPresentationModel = ContactPresentationModel(fullname: contact.fullname, thumbnailData: success, id: id)
-                    contactList.append(contactPresentationModel)
-                case .failure(_):
-                    let contactPresentationModel = ContactPresentationModel(fullname: contact.fullname, thumbnailData: nil, id: id)
-                    contactList.append(contactPresentationModel)
-                }
-                group.leave()
-            }
-            group.wait()
+            let presentationModel = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailData: nil, id: id)
+            contactList.append(presentationModel)
             contactsDict[id] = contact
         }
         return (contactList, contactsDict)
@@ -77,11 +68,10 @@ extension ContactListPresenter: ContactListPresenterProtocol {
             switch result {
             case .success(let success):
                 DispatchQueue.global(qos: .userInitiated).async {
-                    var contactsInfo = self.createDataForStorage(success)
-                    let dataStorage = ContactListDataStorage.shared
-                    dataStorage.setDataStorageIfEmpty(contactsInfo.0, contactsInfo.1)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 7.0, execute: {
-                        let state = ContactListViewState.downloaded(dataStorage)
+                    let contactsInfo = self.createDataForStorage(success)
+                    self.dataProviderService?.setDataStorageIfEmpty(contactsInfo.0, contactsInfo.1)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
+                        let state = ContactListViewState.downloaded(self.dataProviderService)
                         self.updateUI(state: state)
                     })
                 }
@@ -92,23 +82,48 @@ extension ContactListPresenter: ContactListPresenterProtocol {
         }
     }
     
+    func requestThumbnail(contacts: [ContactPresentationModel]) -> [ContactPresentationModel] {
+        var contactsWithThumbnailRequests: [ContactPresentationModel] = []
+        let group = DispatchGroup()
+        for contact in contacts {
+            if dataCache.lookForImageData(for: contact.thumbnailString) == nil {
+                group.enter()
+                networkService.requestImage(urlString: contact.thumbnailString) { result in
+                    switch result {
+                    case .success(let success):
+                        let contactWithImage = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailData: success, id: contact.id)
+                        contactsWithThumbnailRequests.append(contactWithImage)
+                    case .failure(_):
+                        let contactWithoutImage = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailData: nil, id: contact.id)
+                        contactsWithThumbnailRequests.append(contactWithoutImage)
+                    }
+                    group.leave()
+                }
+            } else {
+                guard let data = dataCache.lookForImageData(for: contact.thumbnailString) else { return [] }
+                let contactWithImage = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailData: data, id: contact.id)
+                contactsWithThumbnailRequests.append(contactWithImage)
+            }
+            group.wait()
+        }
+        return contactsWithThumbnailRequests
+    }
+    
     func filterContacts(_ searchText: String, listIsFiltered: Bool) {
-        let contactListDataStorage = ContactListDataStorage.shared
         if listIsFiltered {
-            let contactFilterer = ContactListFilterer(searchText: searchText, filteredContacts: contactListDataStorage.filterContactList(searchText))
-            contactListDataStorage.contactListStatus = .filtered(contactFilterer)
-            let state = ContactListViewState.downloaded(contactListDataStorage)
+            let contactFilterer = ContactListFilterer(searchText: searchText, filteredContacts: dataProviderService?.filterContactList(searchText) ?? [])
+            dataProviderService?.contactListStatus = .filtered(contactFilterer)
+            let state = ContactListViewState.downloaded(dataProviderService)
             updateUI(state: state)
         } else {
-            contactListDataStorage.contactListStatus = .complete
-            let state = ContactListViewState.downloaded(contactListDataStorage)
+            dataProviderService.contactListStatus = .complete
+            let state = ContactListViewState.downloaded(dataProviderService)
             updateUI(state: state)
         }
     }
     
     func openContact(id: String) {
-        let contactListDataStorage = ContactListDataStorage.shared
-        guard let contactItem = contactListDataStorage.getAContactDomainModelByID(id: id) else { return }
+        guard let contactItem = dataProviderService.getAContactDomainModelByID(id: id) else { return }
         router?.openContact(contact: contactItem)
     }
 }

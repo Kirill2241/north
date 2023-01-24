@@ -25,10 +25,12 @@ class ContactListViewController: UIViewController {
         return lbl
     }()
     private var contactList: [ContactPresentationModel] = []
+    private lazy var dataSource = createDataSource()
     private var searchBarIsEmpty: Bool {
         guard let text = searchController.searchBar.text else { return false }
         return text.isEmpty
     }
+    private var listIndex = 0
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
@@ -39,7 +41,10 @@ class ContactListViewController: UIViewController {
     
     private func configureViews() {
         tableView.register(ContactTableViewCell.self, forCellReuseIdentifier: ContactTableViewCell.reuseId)
-        tableView.dataSource = self
+        tableView.dataSource = dataSource
+        var snapshot = NSDiffableDataSourceSnapshot<String, ContactPresentationModel>()
+        snapshot.appendSections(["1"])
+        dataSource.apply(snapshot)
         tableView.delegate = self
         view.addSubview(tableView)
         tableView.snp.makeConstraints{ (maker) in
@@ -71,10 +76,6 @@ class ContactListViewController: UIViewController {
         navigationController?.navigationBar.isHidden = true
     }
     
-    private func retryRequest() {
-        presenter?.tryRequest()
-    }
-    
     // MARK: - Navigation
     /*
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -97,26 +98,32 @@ extension ContactListViewController: ContactListViewProtocol {
             nothingFoundLabel.isHidden = true
             tableView.isHidden = false
             navigationController?.navigationBar.isHidden = false
-            tableView.reloadData()
+            var index = 0
+            var partialContacts: [ContactPresentationModel] = []
+            for i in 0...contactList.count-1 {
+                index += 1
+                partialContacts.append(contactList[i])
+                if index == 20 || (contactList.count < 20 && i == contactList.count-1){
+                    updateDataSource(partialContacts)
+                    guard let contactsWithImages = presenter?.requestThumbnail(contacts: partialContacts) else { return }
+                    updateDataSource(contactsWithImages)
+                    index = 0
+                    partialContacts = []
+                }
+            }
         }
     }
     
     func setRequestFailureView(error: Error){
         let alert = UIAlertController(title: "При выполнении запроса произошла ошибка", message: "Пожалуйста, проверьте подключение. Ошибка: "+error.localizedDescription, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "Повторить попытку", style: UIAlertAction.Style.default){ _ in
-            self.retryRequest()
+            self.presenter?.tryRequest()
         })
         self.present(alert, animated: true, completion: nil)
     }
     
-    func isLoading(_ bool: Bool) {
-        if bool {
-            activityIndicator.startAnimating()
-        } else {
-            if activityIndicator.isAnimating{
-                activityIndicator.stopAnimating()
-            }
-        }
+    func isLoading(_ isLoading: Bool) {
+        isLoading ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
     }
     
 }
@@ -130,27 +137,30 @@ extension ContactListViewController: UISearchResultsUpdating {
     }
 }
 
-extension ContactListViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return contactList.count
+extension ContactListViewController {
+    func createDataSource() -> UITableViewDiffableDataSource<String, ContactPresentationModel> {
+        return UITableViewDiffableDataSource(
+            tableView: self.tableView,
+            cellProvider: { tableView,indexPath,contact in
+                let cell = tableView.dequeueReusableCell(withIdentifier: ContactTableViewCell.reuseId, for: indexPath) as! ContactTableViewCell
+                let defaultImage = UIImage(systemName: "person.fill")!
+                let defaultImageData = defaultImage.jpegData(compressionQuality: 1.0)!
+                let data = contact.thumbnailData ?? defaultImageData
+                let image = UIImage(data: data) ?? defaultImage
+                cell.configure(fullName: contact.fullname, photo: image)
+                return cell
+            }
+        )
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ContactTableViewCell.reuseId, for: indexPath) as! ContactTableViewCell
-        let contact = contactList[indexPath.row]
-        let fullname = contact.fullname
-        let errorImage = UIImage(named: "Error")!
-        let errorImageData = errorImage.jpegData(compressionQuality: 1.0)!
-        let thumbnailData = contact.thumbnailData
-        let thumbnail = UIImage(data: thumbnailData ?? errorImageData) ?? errorImage
-        cell.configure(fullName: fullname, photo: thumbnail)
-        return cell
+    func updateDataSource(_ contacts: [ContactPresentationModel]) {
+        var snapshot = dataSource.snapshot()
+        snapshot.appendItems(contacts)
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50
-    }
 }
+
 
 extension ContactListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -159,5 +169,9 @@ extension ContactListViewController: UITableViewDelegate {
             let id = contactPresentationModel.id
             presenter?.openContact(id: id)
         }
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
     }
 }

@@ -9,5 +9,5 @@ import UIKit
 protocol ContactListViewProtocol: AnyObject {
     func updateContactList(_ list: [ContactPresentationModel])
     func setRequestFailureView(error: Error)
-    func isLoading(_ bool: Bool)
+    func isLoading(_ isLoading: Bool)
 }

@@ -8,26 +8,37 @@
 enum ContactListViewState {
     case loading
     case error(Error)
-    case downloaded(ContactListDataStorage)
+    case downloaded(ContactListDataProviderProtocol)
 }
 
-class ContactListDataStorage {
-    var contactListStatus: ContactListStatus
+protocol ContactListDataProviderProtocol {
+    func setDataStorageIfEmpty(_ list: [ContactPresentationModel], _ dict: [String: ContactItem])
+    func getFullArray() -> [ContactPresentationModel]
+    func filterContactList(_ searchString: String) -> [ContactPresentationModel]
+    func getAContactDomainModelByID(id: String) -> ContactItem?
+    static var shared: ContactListDataProvider { get }
+    var contactListStatus: ContactListStatus { get set }
+}
+
+class ContactListDataProvider {
     private var downloadedList: [ContactPresentationModel]
     private var contactItemsDict: [String: ContactItem]
-    
-    static var shared: ContactListDataStorage = {
-        let shared = ContactListDataStorage()
-        return shared
-    }()
-    
+    var contactListStatus: ContactListStatus
     private init(_ list: [ContactPresentationModel] = [], _ dict: [String: ContactItem] = [:]) {
         self.contactListStatus = ContactListStatus.complete
         self.downloadedList = list
         self.contactItemsDict = dict
     }
     
-    func setDataStorageIfEmpty(_ list: [ContactPresentationModel], _ dict: [String: ContactItem]){
+}
+
+extension ContactListDataProvider: ContactListDataProviderProtocol {
+    static var shared: ContactListDataProvider = {
+        let shared = ContactListDataProvider()
+        return shared
+    }()
+    
+    func setDataStorageIfEmpty(_ list: [ContactPresentationModel], _ dict: [String: ContactItem]) {
         if downloadedList.count == 0 && contactItemsDict.count == 0 {
             self.downloadedList = list
             self.contactItemsDict = dict
