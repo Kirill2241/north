@@ -105,8 +105,10 @@ extension ContactListViewController: ContactListViewProtocol {
                 partialContacts.append(contactList[i])
                 if index == 20 || (contactList.count < 20 && i == contactList.count-1){
                     updateDataSource(partialContacts)
-                    guard let contactsWithImages = presenter?.requestThumbnail(contacts: partialContacts) else { return }
-                    updateDataSource(contactsWithImages)
+                    DispatchQueue.main.async {
+                        guard let contactsWithImages = self.presenter?.requestThumbnail(contacts: partialContacts) else { return }
+                        self.updateDataSource(contactsWithImages)
+                    }
                     index = 0
                     partialContacts = []
                 }

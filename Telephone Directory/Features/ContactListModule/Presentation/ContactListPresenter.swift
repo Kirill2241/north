@@ -67,14 +67,12 @@ extension ContactListPresenter: ContactListPresenterProtocol {
         networkService.fetchContactList(number: 1000) { result in
             switch result {
             case .success(let success):
-                DispatchQueue.global(qos: .userInitiated).async {
-                    let contactsInfo = self.createDataForStorage(success)
-                    self.dataProviderService?.setDataStorageIfEmpty(contactsInfo.0, contactsInfo.1)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
-                        let state = ContactListViewState.downloaded(self.dataProviderService)
-                        self.updateUI(state: state)
-                    })
-                }
+                let contactsInfo = self.createDataForStorage(success)
+                self.dataProviderService?.setDataStorageIfEmpty(contactsInfo.0, contactsInfo.1)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
+                    let state = ContactListViewState.downloaded(self.dataProviderService)
+                    self.updateUI(state: state)
+                })
             case .failure(let error):
                 let state = ContactListViewState.error(error)
                 self.updateUI(state: state)
