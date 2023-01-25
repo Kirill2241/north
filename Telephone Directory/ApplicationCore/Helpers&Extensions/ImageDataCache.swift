@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class DataCache {
+final class ImageDataCache {
     private lazy var dataCache: NSCache<AnyObject, AnyObject> = {
             let cache = NSCache<AnyObject, AnyObject>()
             cache.countLimit = config.countLimit
@@ -34,7 +34,7 @@ final class DataCache {
         }
 }
 
-extension DataCache: DataCacheTypeProtocol {
+extension ImageDataCache: ImageDataCacheTypeProtocol {
     func lookForImageData(for urlString: String) -> Data? {
         lock.lock(); defer { lock.unlock() }
             if let data = dataCache.object(forKey: urlString as AnyObject) as? Data {

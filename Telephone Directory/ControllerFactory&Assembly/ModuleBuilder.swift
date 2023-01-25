@@ -12,9 +12,9 @@ class ModuleBuilder: ModuleBuilderProtocol {
     func buildContactList(router: RouterProtocol) -> UIViewController {
         let view = ContactListViewController()
         let networkService = NetworkService()
-        let dataProviderService = ContactListDataProvider.shared
-        let dataCache = DataCache()
-        let presenter = ContactListPresenter(view: view, networkService: networkService, router: router, dataProviderService: dataProviderService, dataCache: dataCache)
+        let downloadedContactsState = DownloadedContactsState()
+        let imageDataCache = ImageDataCache()
+        let presenter = ContactListPresenter(view: view, networkService: networkService, router: router, downloadedContactsState: downloadedContactsState, dataCache: imageDataCache)
         view.presenter = presenter
         return view
     }

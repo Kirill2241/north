@@ -7,7 +7,7 @@
 
 import Foundation
 import UIKit
-protocol DataCacheTypeProtocol: AnyObject {
+protocol ImageDataCacheTypeProtocol: AnyObject {
     func lookForImageData(for urlString: String) -> Data?
     func insertImageData(_ data: Data?, for urlString: String)
 }

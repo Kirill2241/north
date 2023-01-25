@@ -40,8 +40,8 @@
 		EBAB57AD294086D100DCD66A /* OneContactPresenterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57AC294086D100DCD66A /* OneContactPresenterProtocol.swift */; };
 		EBAB57AF2940870A00DCD66A /* OneContactViewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57AE2940870A00DCD66A /* OneContactViewProtocol.swift */; };
 		EBAB57B12940A5BF00DCD66A /* CustomModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB57B02940A5BF00DCD66A /* CustomModalViewController.swift */; };
-		EBDD4280297F399D00F22FF5 /* DataCacheTypeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD427F297F399D00F22FF5 /* DataCacheTypeProtocol.swift */; };
-		EBDD4282297F3A5000F22FF5 /* DataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD4281297F3A5000F22FF5 /* DataCache.swift */; };
+		EBDD4280297F399D00F22FF5 /* ImageDataCacheTypeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD427F297F399D00F22FF5 /* ImageDataCacheTypeProtocol.swift */; };
+		EBDD4282297F3A5000F22FF5 /* ImageDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD4281297F3A5000F22FF5 /* ImageDataCache.swift */; };
 		EBE30D5B2979190200F1DF00 /* ContactListViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE30D5A2979190200F1DF00 /* ContactListViewState.swift */; };
 /* End PBXBuildFile section */
 
@@ -106,8 +106,8 @@
 		EBAB57AC294086D100DCD66A /* OneContactPresenterProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneContactPresenterProtocol.swift; sourceTree = "<group>"; };
 		EBAB57AE2940870A00DCD66A /* OneContactViewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneContactViewProtocol.swift; sourceTree = "<group>"; };
 		EBAB57B02940A5BF00DCD66A /* CustomModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomModalViewController.swift; sourceTree = "<group>"; };
-		EBDD427F297F399D00F22FF5 /* DataCacheTypeProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCacheTypeProtocol.swift; sourceTree = "<group>"; };
-		EBDD4281297F3A5000F22FF5 /* DataCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCache.swift; sourceTree = "<group>"; };
+		EBDD427F297F399D00F22FF5 /* ImageDataCacheTypeProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataCacheTypeProtocol.swift; sourceTree = "<group>"; };
+		EBDD4281297F3A5000F22FF5 /* ImageDataCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataCache.swift; sourceTree = "<group>"; };
 		EBE30D5A2979190200F1DF00 /* ContactListViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListViewState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -191,8 +191,8 @@
 			isa = PBXGroup;
 			children = (
 				EBAB57902939316900DCD66A /* HTTPError.swift */,
-				EBDD427F297F399D00F22FF5 /* DataCacheTypeProtocol.swift */,
-				EBDD4281297F3A5000F22FF5 /* DataCache.swift */,
+				EBDD427F297F399D00F22FF5 /* ImageDataCacheTypeProtocol.swift */,
+				EBDD4281297F3A5000F22FF5 /* ImageDataCache.swift */,
 			);
 			path = "Helpers&Extensions";
 			sourceTree = "<group>";
@@ -611,9 +611,9 @@
 				EBAB57802937D77C00DCD66A /* Router.swift in Sources */,
 				EBAB57AF2940870A00DCD66A /* OneContactViewProtocol.swift in Sources */,
 				EB4FC4A72954F00800A9F506 /* NetworkServiceProtocol.swift in Sources */,
-				EBDD4280297F399D00F22FF5 /* DataCacheTypeProtocol.swift in Sources */,
+				EBDD4280297F399D00F22FF5 /* ImageDataCacheTypeProtocol.swift in Sources */,
 				EBAB57A7294085EF00DCD66A /* ContactListPresenterProtocol.swift in Sources */,
-				EBDD4282297F3A5000F22FF5 /* DataCache.swift in Sources */,
+				EBDD4282297F3A5000F22FF5 /* ImageDataCache.swift in Sources */,
 				EBE30D5B2979190200F1DF00 /* ContactListViewState.swift in Sources */,
 				EBAB57502937D63A00DCD66A /* SceneDelegate.swift in Sources */,
 				EBAB5793293A085700DCD66A /* OneContactPresenter.swift in Sources */,

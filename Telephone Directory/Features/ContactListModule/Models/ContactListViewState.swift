@@ -8,35 +8,31 @@
 enum ContactListViewState {
     case loading
     case error(Error)
-    case downloaded(ContactListDataProviderProtocol)
+    case downloaded(DownloadedContactsStateProtocol)
 }
 
-protocol ContactListDataProviderProtocol {
+protocol DownloadedContactsStateProtocol {
     func setDataStorageIfEmpty(_ list: [ContactPresentationModel], _ dict: [String: ContactItem])
-    func getFullArray() -> [ContactPresentationModel]
-    func filterContactList(_ searchString: String) -> [ContactPresentationModel]
+    func getFullArray()
+    func insertNewContact(_ contact: ContactPresentationModel, at index: Int)
+    func filterContactList(_ searchString: String)
     func getAContactDomainModelByID(id: String) -> ContactItem?
-    static var shared: ContactListDataProvider { get }
-    var contactListStatus: ContactListStatus { get set }
+    func getAContactPresentationModelByIndex(index: Int) -> ContactPresentationModel?
+    var contactListFilteringState: ContactListFilteringState { get }
 }
 
-class ContactListDataProvider {
+class DownloadedContactsState {
     private var downloadedList: [ContactPresentationModel]
     private var contactItemsDict: [String: ContactItem]
-    var contactListStatus: ContactListStatus
-    private init(_ list: [ContactPresentationModel] = [], _ dict: [String: ContactItem] = [:]) {
-        self.contactListStatus = ContactListStatus.complete
+    var contactListFilteringState: ContactListFilteringState
+    init(_ list: [ContactPresentationModel] = [], _ dict: [String: ContactItem] = [:], filteringState: ContactListFilteringState = ContactListFilteringState.notFiltered([])) {
+        self.contactListFilteringState = filteringState
         self.downloadedList = list
         self.contactItemsDict = dict
     }
-    
 }
 
-extension ContactListDataProvider: ContactListDataProviderProtocol {
-    static var shared: ContactListDataProvider = {
-        let shared = ContactListDataProvider()
-        return shared
-    }()
+extension DownloadedContactsState: DownloadedContactsStateProtocol {
     
     func setDataStorageIfEmpty(_ list: [ContactPresentationModel], _ dict: [String: ContactItem]) {
         if downloadedList.count == 0 && contactItemsDict.count == 0 {
@@ -44,21 +40,36 @@ extension ContactListDataProvider: ContactListDataProviderProtocol {
             self.contactItemsDict = dict
         }
     }
-    func getFullArray() -> [ContactPresentationModel] {
-        return downloadedList
+    
+    func getFullArray() {
+        self.contactListFilteringState = .notFiltered(downloadedList)
     }
-    func filterContactList(_ searchString: String) -> [ContactPresentationModel] {
-        return downloadedList.filter({
+    
+    func insertNewContact(_ contact: ContactPresentationModel, at index: Int) {
+        downloadedList.insert(contact, at: index)
+    }
+    
+    func filterContactList(_ searchString: String) {
+        let filteredContacts = downloadedList.filter({
             $0.fullname.lowercased().contains(searchString.lowercased())
         })
+        self.contactListFilteringState = .filtered(ContactListFilterer(searchText: searchString, filteredContacts: filteredContacts))
     }
+    
     func getAContactDomainModelByID(id: String) -> ContactItem? {
         return contactItemsDict[id]
     }
+    func getAContactPresentationModelByIndex(index: Int) -> ContactPresentationModel? {
+        if index > downloadedList.count-1 || index < 0 {
+            return nil
+        } else {
+            return downloadedList.remove(at: index)
+        }
+    }
 }
 
-enum ContactListStatus {
-    case complete
+enum ContactListFilteringState {
+    case notFiltered([ContactPresentationModel])
     case filtered(ContactListFilterer)
 }
 

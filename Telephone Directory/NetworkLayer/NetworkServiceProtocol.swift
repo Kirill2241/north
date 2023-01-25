@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol NetworkServiceProtocol {
+protocol NetworkServiceProtocol: Operation {
     func requestImage(urlString: String, completion: @escaping(Result<Data, Error>) -> Void)
     func fetchContactList(number: Int, completion: @escaping(Result<[ContactItem], Error>) -> Void)
 }

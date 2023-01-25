@@ -42,9 +42,6 @@ class ContactListViewController: UIViewController {
     private func configureViews() {
         tableView.register(ContactTableViewCell.self, forCellReuseIdentifier: ContactTableViewCell.reuseId)
         tableView.dataSource = dataSource
-        var snapshot = NSDiffableDataSourceSnapshot<String, ContactPresentationModel>()
-        snapshot.appendSections(["1"])
-        dataSource.apply(snapshot)
         tableView.delegate = self
         view.addSubview(tableView)
         tableView.snp.makeConstraints{ (maker) in
@@ -98,21 +95,7 @@ extension ContactListViewController: ContactListViewProtocol {
             nothingFoundLabel.isHidden = true
             tableView.isHidden = false
             navigationController?.navigationBar.isHidden = false
-            var index = 0
-            var partialContacts: [ContactPresentationModel] = []
-            for i in 0...contactList.count-1 {
-                index += 1
-                partialContacts.append(contactList[i])
-                if index == 20 || (contactList.count < 20 && i == contactList.count-1){
-                    updateDataSource(partialContacts)
-                    DispatchQueue.main.async {
-                        guard let contactsWithImages = self.presenter?.requestThumbnail(contacts: partialContacts) else { return }
-                        self.updateDataSource(contactsWithImages)
-                    }
-                    index = 0
-                    partialContacts = []
-                }
-            }
+            updateDataSource(list)
         }
     }
     
@@ -146,17 +129,24 @@ extension ContactListViewController {
             cellProvider: { tableView,indexPath,contact in
                 let cell = tableView.dequeueReusableCell(withIdentifier: ContactTableViewCell.reuseId, for: indexPath) as! ContactTableViewCell
                 let defaultImage = UIImage(systemName: "person.fill")!
-                let defaultImageData = defaultImage.jpegData(compressionQuality: 1.0)!
-                let data = contact.thumbnailData ?? defaultImageData
-                let image = UIImage(data: data) ?? defaultImage
-                cell.configure(fullName: contact.fullname, photo: image)
+                switch contact.thumbnail.state {
+                case .downloaded(let data):
+                    let image = UIImage(data: data)!
+                    cell.configure(fullName: contact.fullname, photo: image)
+                case .failed:
+                    cell.configure(fullName: contact.fullname, photo: defaultImage)
+                case .new:
+                    cell.configure(fullName: contact.fullname, photo: defaultImage)
+                    self.presenter?.contactsWithImage(at: indexPath.row)
+                }
                 return cell
             }
         )
     }
     
     func updateDataSource(_ contacts: [ContactPresentationModel]) {
-        var snapshot = dataSource.snapshot()
+        var snapshot = NSDiffableDataSourceSnapshot<String, ContactPresentationModel>()
+        snapshot.appendSections(["1"])
         snapshot.appendItems(contacts)
         dataSource.apply(snapshot, animatingDifferences: true)
     }

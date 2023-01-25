@@ -7,7 +7,7 @@
 
 import Foundation
 
-class NetworkService {
+class NetworkService: Operation {
     
     private func loadContactList(number: Int, completion: @escaping(Result<[OneContactNetworkResponse], Error>) -> Void) {
         let urlString = "https://randomuser.me/api/?results=\(number)&inc=name,phone,cell,email,nat,picture"
