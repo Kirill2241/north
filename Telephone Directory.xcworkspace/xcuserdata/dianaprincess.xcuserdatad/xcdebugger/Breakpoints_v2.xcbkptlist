@@ -53,8 +53,8 @@
             filePath = "Telephone Directory/Features/ContactListModule/Presentation/ContactListPresenter.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "81"
-            endingLineNumber = "81"
+            startingLineNumber = "82"
+            endingLineNumber = "82"
             landmarkName = "tryRequest()"
             landmarkType = "7">
          </BreakpointContent>
@@ -69,8 +69,8 @@
             filePath = "Telephone Directory/Features/ContactListModule/Presentation/ContactListPresenter.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "55"
-            endingLineNumber = "55"
+            startingLineNumber = "56"
+            endingLineNumber = "56"
             landmarkName = "updateUI(state:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -85,8 +85,8 @@
             filePath = "Telephone Directory/Features/ContactListModule/Presentation/ContactListPresenter.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "60"
-            endingLineNumber = "60"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
             landmarkName = "updateUI(state:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -101,8 +101,8 @@
             filePath = "Telephone Directory/Features/ContactListModule/Presentation/ContactListPresenter.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "62"
-            endingLineNumber = "62"
+            startingLineNumber = "63"
+            endingLineNumber = "63"
             landmarkName = "updateUI(state:)"
             landmarkType = "7">
          </BreakpointContent>

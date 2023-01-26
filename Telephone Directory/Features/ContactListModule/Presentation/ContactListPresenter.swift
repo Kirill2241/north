@@ -15,6 +15,7 @@ class ContactListPresenter {
     private var downloadedContactsState: DownloadedContactsStateProtocol!
     private var imageDataCache: ImageDataCacheTypeProtocol
     private lazy var imageDownloadsInProgress: [Int: Operation] = [:]
+    private var filterString = ""
     private lazy var imageDownloadQueue: OperationQueue = {
         var queue = OperationQueue()
         queue.name = "Downloading thumbnails"
@@ -113,17 +114,24 @@ extension ContactListPresenter: ContactListPresenterProtocol {
                     downloadedContactsState.insertNewContact(newContact, at: index)
                 }
             }
-        downloadedContactsState.getFullArray()
+        switch downloadedContactsState.contactListFilteringState {
+        case .notFiltered(_):
+            downloadedContactsState.getFullArray()
+        case .filtered(_):
+            downloadedContactsState.filterContactList(filterString)
+        }
         let state = ContactListViewState.downloaded(downloadedContactsState)
         updateUI(state: state)
     }
     
     func filterContacts(_ searchText: String, listIsFiltered: Bool) {
         if listIsFiltered {
+            filterString = searchText
             downloadedContactsState.filterContactList(searchText)
             let state = ContactListViewState.downloaded(downloadedContactsState)
             updateUI(state: state)
         } else {
+            filterString = ""
             downloadedContactsState.getFullArray()
             let state = ContactListViewState.downloaded(downloadedContactsState)
             updateUI(state: state)

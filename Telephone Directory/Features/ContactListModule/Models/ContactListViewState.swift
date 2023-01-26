@@ -73,7 +73,7 @@ enum ContactListFilteringState {
     case filtered(ContactListFilterer)
 }
 
-struct ContactListFilterer {
+struct ContactListFilterer: Equatable {
     let searchText: String
     let filteredContacts: [ContactPresentationModel]
 }
