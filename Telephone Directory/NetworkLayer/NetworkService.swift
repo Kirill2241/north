@@ -7,7 +7,13 @@
 
 import Foundation
 
-class NetworkService: Operation {
+class NetworkService {
+    var imageDownloaderQueue: OperationQueue = {
+        var queue = OperationQueue()
+        queue.name = "Download queue"
+        queue.maxConcurrentOperationCount = 20
+        return queue
+    }()
     
     private func loadContactList(number: Int, completion: @escaping(Result<[OneContactNetworkResponse], Error>) -> Void) {
         let urlString = "https://randomuser.me/api/?results=\(number)&inc=name,phone,cell,email,nat,picture"
@@ -42,24 +48,17 @@ class NetworkService: Operation {
     }
     
     private func loadImage(from text: String, completion: @escaping(Result<Data?, HTTPError>) -> Void) {
-        guard let photoUrl = URL(string: text) else { return }
-        let request = URLRequest(url: photoUrl)
-        URLSession.shared.dataTask(with: request){ data, response, error in
-            if let error = error {
-                completion(.failure(HTTPError.transportError(error)))
-                return
+        let imageDownloader = ImageDownloader(imageURLString: text)
+        imageDownloader.completionBlock = {
+            guard let result = imageDownloader.result else { return }
+            switch result {
+            case .success(let success):
+                completion(.success(success))
+            case .failure(let failure):
+                completion(.failure(failure))
             }
-            do{
-                let resp = response as! HTTPURLResponse
-                let status = resp.statusCode
-                guard (200...299).contains(status) else {
-                    completion(.failure(HTTPError.httpError(status)))
-                    return
-                }
-                let correctResponse = data!
-                completion(.success(correctResponse))
-            }
-        }.resume()
+        }
+        imageDownloaderQueue.addOperation(imageDownloader)
     }
     
 }

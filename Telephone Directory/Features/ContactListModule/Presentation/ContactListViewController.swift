@@ -129,15 +129,15 @@ extension ContactListViewController {
             cellProvider: { tableView,indexPath,contact in
                 let cell = tableView.dequeueReusableCell(withIdentifier: ContactTableViewCell.reuseId, for: indexPath) as! ContactTableViewCell
                 let defaultImage = UIImage(systemName: "person.fill")!
-                switch contact.thumbnail.state {
+                switch contact.thumbnailState {
                 case .downloaded(let data):
                     let image = UIImage(data: data)!
                     cell.configure(fullName: contact.fullname, photo: image)
                 case .failed:
                     cell.configure(fullName: contact.fullname, photo: defaultImage)
-                case .new:
+                case .notDownloaded:
                     cell.configure(fullName: contact.fullname, photo: defaultImage)
-                    self.presenter?.contactsWithImage(at: indexPath.row)
+                    self.presenter?.downloadThumbnailForContact(at: indexPath.row)
                 }
                 return cell
             }

@@ -10,7 +10,7 @@ import Foundation
 struct ContactPresentationModel: Hashable {
     let fullname: String
     let thumbnailString: String
-    let thumbnail: ContactThumbnail
+    let thumbnailState: ContactThumbnailState
     let id: String
 }
 
@@ -19,7 +19,7 @@ struct ContactThumbnail: Hashable {
 }
 
 enum ContactThumbnailState: Hashable {
-    case new
+    case notDownloaded
     case downloaded(Data)
     case failed
 }

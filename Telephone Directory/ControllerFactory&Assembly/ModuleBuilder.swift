@@ -16,6 +16,7 @@ class ModuleBuilder: ModuleBuilderProtocol {
         let imageDataCache = ImageDataCache()
         let presenter = ContactListPresenter(view: view, networkService: networkService, router: router, downloadedContactsState: downloadedContactsState, dataCache: imageDataCache)
         view.presenter = presenter
+        downloadedContactsState.delegate = presenter
         return view
     }
     func buildOneContact(router: RouterProtocol, oneContact: ContactItem) -> UIViewController { 

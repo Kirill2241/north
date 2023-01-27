@@ -12,5 +12,5 @@ protocol ContactListPresenterProtocol {
     func tryRequest()
     func filterContacts(_ searchText: String, listIsFiltered: Bool)
     func openContact(id: String)
-    func contactsWithImage(at index: Int)
+    func downloadThumbnailForContact(at index: Int)
 }

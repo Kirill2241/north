@@ -11,20 +11,11 @@ enum ContactListViewState {
     case downloaded(DownloadedContactsStateProtocol)
 }
 
-protocol DownloadedContactsStateProtocol {
-    func setDataStorageIfEmpty(_ list: [ContactPresentationModel], _ dict: [String: ContactItem])
-    func getFullArray()
-    func insertNewContact(_ contact: ContactPresentationModel, at index: Int)
-    func filterContactList(_ searchString: String)
-    func getAContactDomainModelByID(id: String) -> ContactItem?
-    func getAContactPresentationModelByIndex(index: Int) -> ContactPresentationModel?
-    var contactListFilteringState: ContactListFilteringState { get }
-}
-
 class DownloadedContactsState {
     private var downloadedList: [ContactPresentationModel]
     private var contactItemsDict: [String: ContactItem]
     var contactListFilteringState: ContactListFilteringState
+    var delegate: DownloadedContactsStateDelegate?
     init(_ list: [ContactPresentationModel] = [], _ dict: [String: ContactItem] = [:], filteringState: ContactListFilteringState = ContactListFilteringState.notFiltered([])) {
         self.contactListFilteringState = filteringState
         self.downloadedList = list
@@ -41,8 +32,9 @@ extension DownloadedContactsState: DownloadedContactsStateProtocol {
         }
     }
     
-    func getFullArray() {
+    func deactivateFiltering() {
         self.contactListFilteringState = .notFiltered(downloadedList)
+        delegate?.contactsStateDidChange(.notFiltered(downloadedList))
     }
     
     func insertNewContact(_ contact: ContactPresentationModel, at index: Int) {
@@ -53,7 +45,8 @@ extension DownloadedContactsState: DownloadedContactsStateProtocol {
         let filteredContacts = downloadedList.filter({
             $0.fullname.lowercased().contains(searchString.lowercased())
         })
-        self.contactListFilteringState = .filtered(ContactListFilterer(searchText: searchString, filteredContacts: filteredContacts))
+        self.contactListFilteringState = .filtered(filteredContacts)
+        delegate?.contactsStateDidChange(.filtered(filteredContacts))
     }
     
     func getAContactDomainModelByID(id: String) -> ContactItem? {
@@ -70,12 +63,7 @@ extension DownloadedContactsState: DownloadedContactsStateProtocol {
 
 enum ContactListFilteringState {
     case notFiltered([ContactPresentationModel])
-    case filtered(ContactListFilterer)
-}
-
-struct ContactListFilterer: Equatable {
-    let searchText: String
-    let filteredContacts: [ContactPresentationModel]
+    case filtered([ContactPresentationModel])
 }
 
 
