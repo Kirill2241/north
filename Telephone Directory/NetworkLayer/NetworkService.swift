@@ -11,7 +11,7 @@ class NetworkService {
     var imageDownloaderQueue: OperationQueue = {
         var queue = OperationQueue()
         queue.name = "Download queue"
-        queue.maxConcurrentOperationCount = 20
+        queue.maxConcurrentOperationCount = 1
         return queue
     }()
     
@@ -47,8 +47,8 @@ class NetworkService {
         return ContactItem(fullname: fullname, email: contact.email, phone: contact.phone, cell: contact.cell, largeImageStr: largeImageStr, nat: contact.nat, thumbnailString: contact.picture.thumbnail)
     }
     
-    private func loadImage(from text: String, completion: @escaping(Result<Data?, HTTPError>) -> Void) {
-        let imageDownloader = ImageDownloader(imageURLString: text)
+    private func loadImage(from text: String, index: Int, completion: @escaping(Result<Data?, HTTPError>) -> Void) {
+        let imageDownloader = ImageDownloader(imageURLString: text, index: index)
         imageDownloader.completionBlock = {
             guard let result = imageDownloader.result else { return }
             switch result {
@@ -80,8 +80,8 @@ extension NetworkService: NetworkServiceProtocol{
         return
     }
     
-    func requestImage(urlString: String, completion: @escaping(Result<Data, Error>) -> Void) {
-        loadImage(from: urlString) { result in
+    func requestImage(urlString: String, index: Int, completion: @escaping(Result<Data, Error>) -> Void) {
+        loadImage(from: urlString, index: index) { result in
             switch result {
             case .success(let data):
                 guard let data = data else { return }

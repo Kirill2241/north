@@ -66,10 +66,11 @@ extension ContactListPresenter: ContactListPresenterProtocol {
                 let imageData = imageDataCache.lookForImageData(for: contact.thumbnailString)
                 switch imageData {
                 case .none:
-                    networkService.requestImage(urlString: contact.thumbnailString) { result in
+                    networkService.requestImage(urlString: contact.thumbnailString, index: index) { result in
                         switch result {
                         case .success(let imageData):
                             let newContact = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailState: ContactThumbnailState.downloaded(imageData), id: contact.id)
+                            self.imageDataCache.insertImageData(imageData, for: contact.thumbnailString)
                             self.downloadedContactsState.insertNewContact(newContact, at: index)
                         case .failure(_):
                             let newContact = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailState: ContactThumbnailState.failed, id: contact.id)

@@ -54,23 +54,28 @@ enum OperationState: String {
 
 class ImageDownloader: AsyncOperation {
     var imageURL: String
+    var index: Int
     var result: Result<Data, HTTPError>?
     
-    init(imageURLString: String) {
+    init(imageURLString: String, index: Int) {
         self.imageURL = imageURLString
+        self.index = index
         super.init()
     }
     
     override func main() {
         loadImage(from: imageURL) { response in
+            print("Operation number \(self.index) started")
             switch response {
             case .success(let data):
                 guard let data = data else { return }
                 self.result = .success(data)
                 self.state = .finished
+                print("Operation number \(self.index) finished")
             case .failure(let error):
                 self.result = .failure(error)
                 self.state = .finished
+                print("Operation number \(self.index) finished")
             }
         }
     }

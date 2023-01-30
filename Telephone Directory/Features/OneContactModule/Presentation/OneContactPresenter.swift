@@ -65,7 +65,7 @@ extension OneContactPresenter: OneContactPresenterProtocol {
     }
     
     func requestImage() {
-        networkService.requestImage(urlString: largeImgString){ result in
+        networkService.requestImage(urlString: largeImgString, index: -1){ result in
             switch result {
             case .success(let success):
                 DispatchQueue.main.async {
