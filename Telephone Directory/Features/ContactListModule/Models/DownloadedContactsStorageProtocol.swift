@@ -6,16 +6,16 @@
 //
 
 import Foundation
-protocol DownloadedContactsStateProtocol {
-    func setDataStorageIfEmpty(_ list: [ContactPresentationModel], _ dict: [String: ContactItem])
+protocol DownloadedContactsStorageProtocol {
+    func setDataStorageIfEmpty(_ source: [ContactItem])
     func deactivateFiltering()
-    func insertNewContact(_ contact: ContactPresentationModel, at index: Int)
+    func downloadThumbnailForContact(at index: Int)
     func filterContactList(_ searchString: String)
     func getAContactDomainModelByID(id: String) -> ContactItem?
-    func getAContactPresentationModelByIndex(index: Int) -> ContactPresentationModel?
     var contactListFilteringState: ContactListFilteringState { get }
 }
 
-protocol DownloadedContactsStateDelegate {
+protocol DownloadedContactsStorageDelegate {
+    func requestThumbnailForContact(thumbnailURL: String, at index: Int, completion: @escaping(Result<Data, Error>) -> Void)
     func contactsStateDidChange(_ state: ContactListFilteringState)
 }

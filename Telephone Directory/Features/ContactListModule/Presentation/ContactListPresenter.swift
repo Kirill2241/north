@@ -12,30 +12,17 @@ class ContactListPresenter {
     private weak var view: ContactListViewProtocol?
     private var networkService: NetworkServiceProtocol!
     private var router: RouterProtocol?
-    private var downloadedContactsState: DownloadedContactsStateProtocol!
-    private var imageDataCache: ImageDataCacheTypeProtocol
-    private var filterString = ""
-    init(view: ContactListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol, downloadedContactsState: DownloadedContactsStateProtocol, dataCache: ImageDataCacheTypeProtocol) {
+    private var contactsStorageService: DownloadedContactsStorageProtocol!
+    
+    init(view: ContactListViewProtocol, networkService: NetworkServiceProtocol, router: RouterProtocol, contactsStorageService: DownloadedContactsStorageProtocol) {
         self.view = view
         self.networkService = networkService
         self.router = router
-        self.downloadedContactsState = downloadedContactsState
-        self.imageDataCache = dataCache
-    }
-    
-    private func createDataForStorage(_ contacts: [ContactItem]) -> ([ContactPresentationModel], [String: ContactItem]) {
-        var contactList: [ContactPresentationModel] = []
-        var contactsDict: [String: ContactItem] = [:]
-        for contact in contacts{
-            let id = UUID().uuidString
-            let presentationModel = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailState: ContactThumbnailState.notDownloaded, id: id)
-            contactList.append(presentationModel)
-            contactsDict[id] = contact
-        }
-        return (contactList, contactsDict)
+        self.contactsStorageService = contactsStorageService
     }
 }
 
+// MARK: ContactListPresenterProtocol implementation
 extension ContactListPresenter: ContactListPresenterProtocol {
     
     func tryRequest() {
@@ -44,13 +31,12 @@ extension ContactListPresenter: ContactListPresenterProtocol {
         }
         networkService.fetchContactList(number: 1000) { result in
             switch result {
-            case .success(let success):
-                let contactsInfo = self.createDataForStorage(success)
-                self.downloadedContactsState?.setDataStorageIfEmpty(contactsInfo.0, contactsInfo.1)
+            case .success(let contacts):
+                self.contactsStorageService?.setDataStorageIfEmpty(contacts)
                 DispatchQueue.main.async {
                     self.view?.isLoading(false)
                 }
-                self.downloadedContactsState.deactivateFiltering()
+                self.contactsStorageService.deactivateFiltering()
             case .failure(let error):
                 DispatchQueue.main.async {
                     self.view?.isLoading(false)
@@ -61,52 +47,39 @@ extension ContactListPresenter: ContactListPresenterProtocol {
     }
     
     func downloadThumbnailForContact(at index: Int) {
-        guard let contact = downloadedContactsState.getAContactPresentationModelByIndex(index: index) else { return }
-            if contact.thumbnailState == .notDownloaded {
-                let imageData = imageDataCache.lookForImageData(for: contact.thumbnailString)
-                switch imageData {
-                case .none:
-                    networkService.requestImage(urlString: contact.thumbnailString, index: index) { result in
-                        switch result {
-                        case .success(let imageData):
-                            let newContact = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailState: ContactThumbnailState.downloaded(imageData), id: contact.id)
-                            self.imageDataCache.insertImageData(imageData, for: contact.thumbnailString)
-                            self.downloadedContactsState.insertNewContact(newContact, at: index)
-                        case .failure(_):
-                            let newContact = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailState: ContactThumbnailState.failed, id: contact.id)
-                            self.downloadedContactsState.insertNewContact(newContact, at: index)
-                        }
-                    }
-                case .some(let storedImageData):
-                    let newContact = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailState: ContactThumbnailState.downloaded(storedImageData), id: contact.id)
-                    downloadedContactsState.insertNewContact(newContact, at: index)
-                }
-            }
-        switch downloadedContactsState.contactListFilteringState {
-        case .notFiltered(_):
-            downloadedContactsState.deactivateFiltering()
-        case .filtered(_):
-            downloadedContactsState.filterContactList(filterString)
-        }
+        contactsStorageService.downloadThumbnailForContact(at: index)
     }
     
-    func filterContacts(_ searchText: String, listIsFiltered: Bool) {
-        if listIsFiltered {
-            filterString = searchText
-            downloadedContactsState.filterContactList(searchText)
+    func filterContacts(_ searchText: String?) {
+        if searchText == "" {
+            contactsStorageService.deactivateFiltering()
         } else {
-            filterString = ""
-            downloadedContactsState.deactivateFiltering()
+            guard let searchText = searchText else { return }
+            contactsStorageService.filterContactList(searchText)
         }
     }
     
     func openContact(id: String) {
-        guard let contactItem = downloadedContactsState.getAContactDomainModelByID(id: id) else { return }
+        guard let contactItem = contactsStorageService.getAContactDomainModelByID(id: id) else { return }
         router?.openContact(contact: contactItem)
     }
 }
 
-extension ContactListPresenter: DownloadedContactsStateDelegate {
+// MARK: Implemenation of DownloadedContactsStorageDelegate
+extension ContactListPresenter: DownloadedContactsStorageDelegate {
+    func requestThumbnailForContact(thumbnailURL: String, at index: Int, completion: @escaping (Result<Data, Error>) -> Void) {
+        networkService.requestImage(urlString: thumbnailURL, index: index){ result in
+            switch result {
+            case .success(let data):
+                completion(.success(data))
+                return
+            case .failure(let error):
+                completion(.failure(error))
+                return
+            }
+        }
+    }
+    
     func contactsStateDidChange(_ state: ContactListFilteringState) {
         DispatchQueue.main.async {
             switch state {

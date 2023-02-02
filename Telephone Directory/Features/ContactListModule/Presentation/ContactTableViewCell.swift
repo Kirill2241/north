@@ -15,7 +15,7 @@ class ContactTableViewCell: UITableViewCell {
         let imgView = UIImageView()
         imgView.contentMode = .scaleAspectFit
         imgView.clipsToBounds = true
-        imgView.layer.cornerRadius = 20
+        imgView.layer.cornerRadius = 15
         return imgView
     }()
     
@@ -53,10 +53,10 @@ class ContactTableViewCell: UITableViewCell {
         contactPhotoImageView.snp.makeConstraints{ (maker) in
             maker.top.equalToSuperview().offset(10)
             maker.leading.equalToSuperview().offset(15)
-            maker.width.height.equalTo(40)
+            maker.width.height.equalTo(30)
         }
         fullNameLabel.snp.makeConstraints{ (maker) in
-            maker.top.equalToSuperview().offset(20)
+            maker.top.equalToSuperview().offset(15)
             maker.leading.equalTo(contactPhotoImageView.snp.trailing).offset(10)
             maker.height.equalTo(20)
             maker.trailing.equalToSuperview().inset(10)

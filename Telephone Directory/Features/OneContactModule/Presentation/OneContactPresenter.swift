@@ -11,7 +11,6 @@ class OneContactPresenter {
     private weak var view: OneContactViewProtocol?
     private var networkService: NetworkServiceProtocol!
     private var router: RouterProtocol?
-    private var largeImgString: String = ""
     private let contactItem: ContactItem?
     private let countryCodes: [String: String] = [
         "AU": "61",
@@ -41,7 +40,6 @@ class OneContactPresenter {
         self.view = view
         self.networkService = networkService
         self.router = router
-        self.largeImgString = contact.largeImageStr
         self.contactItem = contact
     }
     
@@ -51,32 +49,35 @@ class OneContactPresenter {
         let unfilteredCell = countryCode+"-"+contact.cell
         let fullPhone = unfilteredPhone.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
         let fullCell = unfilteredCell.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
-        view?.reloadView(fullName: contact.fullname, phone: fullPhone, cell: fullCell, email: contact.email)
+        view?.updateView(fullName: contact.fullname, phone: fullPhone, cell: fullCell, email: contact.email)
     }
-    
-    
 }
 
+// MARK: OneContactPresenterProtocol implementation
 extension OneContactPresenter: OneContactPresenterProtocol {
-    
-    func attemptReload() {
+    func getContactInfo() {
         guard let contact = contactItem else { return }
         presentContactInfo(contact: contact)
     }
     
     func requestImage() {
-        networkService.requestImage(urlString: largeImgString, index: -1){ result in
+        DispatchQueue.main.async {
+            self.view?.imageIsLoading(true)
+        }
+        guard let largeImageURLString = contactItem?.largeImageStr else { return }
+        networkService.requestImage(urlString: largeImageURLString, index: -1) { result in
             switch result {
-            case .success(let success):
+            case .success(let data):
                 DispatchQueue.main.async {
-                    self.view?.setImage(data: success)
+                    self.view?.imageIsLoading(false)
+                    self.view?.setImage(data: data)
                 }
-            case .failure(_):
+            case .failure(let error):
                 DispatchQueue.main.async {
-                    self.view?.setRequestFailureView()
+                    self.view?.imageIsLoading(false)
+                    self.view?.setRequestFailureView(error: error)
                 }
             }
         }
     }
-    
 }

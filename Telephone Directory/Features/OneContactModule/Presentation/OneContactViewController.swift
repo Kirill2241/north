@@ -11,21 +11,23 @@ import MessageUI
 
 class OneContactViewController: UIViewController {
     
+    @IBOutlet private weak var contactImageView: UIImageView!
+    @IBOutlet private weak var fullNameLabel: UILabel!
+    @IBOutlet private weak var phoneLabel: UILabel!
+    @IBOutlet private weak var cellLabel: UILabel!
+    @IBOutlet private weak var mailLabel: UILabel!
+    @IBOutlet private weak var imageLoadingActivityIndicator: UIActivityIndicatorView!
+    
     var presenter: OneContactPresenterProtocol?
     private var phone: String?
     private var cell: String?
     
-    @IBOutlet weak var contactImageView: UIImageView!
-    @IBOutlet weak var fullNameLabel: UILabel!
-    @IBOutlet weak var phoneLabel: UILabel!
-    @IBOutlet weak var cellLabel: UILabel!
-    @IBOutlet weak var mailLabel: UILabel!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter?.attemptReload()
+        presenter?.getContactInfo()
     }
     
+    // MARK: IBACtions for buttons
     @IBAction private func callPhoneNumber(_ sender: UIButton) {
         guard let phoneNumber = phone else { return }
         guard let numberUrl = URL(string: "tel://"+phoneNumber) else { return }
@@ -60,6 +62,7 @@ class OneContactViewController: UIViewController {
         }
     }
     
+    // MARK: function for TapGestureRecognizer
     @objc private func enlargeImage(_ sender: UITapGestureRecognizer) {
         DispatchQueue.main.async {
             let vc = CustomModalViewController()
@@ -71,21 +74,22 @@ class OneContactViewController: UIViewController {
     }
 }
 
+// MARK: OneContactViewProtocol implemenation
 extension OneContactViewController: OneContactViewProtocol {
-    
-    func reloadView(fullName: String, phone: String, cell: String, email: String) {
-        contactImageView.image = UIImage(named: "Error")
+    func updateView(fullName: String, phone: String, cell: String, email: String) {
+        imageLoadingActivityIndicator.hidesWhenStopped = true
+        contactImageView.image = UIImage(systemName: "person.fill")
         fullNameLabel.text = fullName
         self.phone = phone
-        phoneLabel.text = "Телефон: "+phone
+        phoneLabel.text = "Телефон: +"+phone
         self.cell = cell
-        cellLabel.text = "Мобильный: "+cell
+        cellLabel.text = "Мобильный: +"+cell
         mailLabel.text = email
         presenter?.requestImage()
     }
     
     func setImage(data: Data) {
-        guard let image = UIImage(data: data) else { return  }
+        guard let image = UIImage(data: data) else { return }
         self.contactImageView.image = image
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.enlargeImage(_:)))
         tapGestureRecognizer.numberOfTouchesRequired = 1
@@ -93,16 +97,20 @@ extension OneContactViewController: OneContactViewProtocol {
         self.contactImageView.addGestureRecognizer(tapGestureRecognizer)
     }
     
-    func setRequestFailureView() {
-        let alert = UIAlertController(title: "Не удалось загрузить изображение", message: "Пожалуйста, проверьте подключение и повторите попытку", preferredStyle: UIAlertController.Style.alert)
+    func setRequestFailureView(error: Error) {
+        let alert = UIAlertController(title: "Не удалось загрузить изображение", message:  "Пожалуйста, проверьте подключение. Ошибка: "+error.localizedDescription, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "Повторить попытку", style: UIAlertAction.Style.default){_ in
             self.presenter?.requestImage()
         })
         self.present(alert, animated: true, completion: nil)
     }
     
+    func imageIsLoading(_ isLoading: Bool) {
+        isLoading ? imageLoadingActivityIndicator.startAnimating() : imageLoadingActivityIndicator.stopAnimating()
+    }
 }
 
+// MARK: Delegate for messaging
 extension OneContactViewController: MFMessageComposeViewControllerDelegate {
     func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
         self.dismiss(animated: true, completion: nil)

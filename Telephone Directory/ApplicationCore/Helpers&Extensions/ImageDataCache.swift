@@ -13,12 +13,7 @@ final class ImageDataCache {
             cache.countLimit = config.countLimit
             return cache
         }()
-        /*
-        private lazy var decodedImageCache: NSCache<AnyObject, AnyObject> = {
-            let cache = NSCache<AnyObject, AnyObject>()
-            cache.totalCostLimit = config.memoryLimit
-            return cache
-        }()*/
+
         private let lock = NSLock()
         private let config: Config
 
@@ -47,6 +42,5 @@ extension ImageDataCache: ImageDataCacheTypeProtocol {
         guard let data = data else { return }
         lock.lock(); defer { lock.unlock() }
         dataCache.setObject(data as AnyObject, forKey: urlString as AnyObject)
-        //decodedImageCache.setObject(image as AnyObject, forKey: urlString as AnyObject, cost: decodedImage.)
     }
 }

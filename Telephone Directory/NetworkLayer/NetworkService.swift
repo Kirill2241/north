@@ -8,12 +8,16 @@
 import Foundation
 
 class NetworkService {
-    var imageDownloaderQueue: OperationQueue = {
+    private var imageDownloaderQueue: OperationQueue = {
         var queue = OperationQueue()
         queue.name = "Download queue"
         queue.maxConcurrentOperationCount = 1
         return queue
     }()
+    private var imageDataCache: ImageDataCacheTypeProtocol
+    init(imageDataCache: ImageDataCacheTypeProtocol) {
+        self.imageDataCache = imageDataCache
+    }
     
     private func loadContactList(number: Int, completion: @escaping(Result<[OneContactNetworkResponse], Error>) -> Void) {
         let urlString = "https://randomuser.me/api/?results=\(number)&inc=name,phone,cell,email,nat,picture"
@@ -48,22 +52,19 @@ class NetworkService {
     }
     
     private func loadImage(from text: String, index: Int, completion: @escaping(Result<Data?, HTTPError>) -> Void) {
-        let imageDownloader = ImageDownloader(imageURLString: text, index: index)
-        imageDownloader.completionBlock = {
-            guard let result = imageDownloader.result else { return }
+        let imageDownloader = ImageDownloadingOperation(imageURLString: text, index: index){ result in
             switch result {
-            case .success(let success):
-                completion(.success(success))
-            case .failure(let failure):
-                completion(.failure(failure))
+            case .success(let data):
+                completion(.success(data))
+            case .failure(let error):
+                completion(.failure(error))
             }
         }
         imageDownloaderQueue.addOperation(imageDownloader)
     }
-    
 }
 
-extension NetworkService: NetworkServiceProtocol{
+extension NetworkService: NetworkServiceProtocol {
     
     func fetchContactList(number: Int, completion: @escaping(Result<[ContactItem], Error>) -> Void) {
             self.loadContactList(number: number){ (result) in
@@ -81,17 +82,24 @@ extension NetworkService: NetworkServiceProtocol{
     }
     
     func requestImage(urlString: String, index: Int, completion: @escaping(Result<Data, Error>) -> Void) {
-        loadImage(from: urlString, index: index) { result in
-            switch result {
-            case .success(let data):
-                guard let data = data else { return }
-                completion(.success(data))
-                return
-            case .failure(let error):
-                completion(.failure(error))
-                return
+        let imageData = imageDataCache.lookForImageData(for: urlString)
+        switch imageData {
+            case .none:
+            loadImage(from: urlString, index: index) { result in
+                switch result {
+                case .success(let data):
+                    guard let data = data else { return }
+                    self.imageDataCache.insertImageData(data, for: urlString)
+                    completion(.success(data))
+                    return
+                case .failure(let error):
+                    completion(.failure(error))
+                    return
+                }
             }
+            case .some(let foundImageData):
+                completion(.success(foundImageData))
+                return
         }
     }
-    
 }

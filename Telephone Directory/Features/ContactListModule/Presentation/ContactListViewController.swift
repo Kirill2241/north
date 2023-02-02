@@ -10,7 +10,6 @@ import SnapKit
 
 class ContactListViewController: UIViewController {
     
-    var presenter: ContactListPresenterProtocol?
     private let tableView = UITableView(frame: .zero)
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private let searchController = UISearchController(searchResultsController: nil)
@@ -24,13 +23,10 @@ class ContactListViewController: UIViewController {
         lbl.text = "По Вашему запросу ничего не найдено"
         return lbl
     }()
-    private var contactList: [ContactPresentationModel] = []
+    
     private lazy var dataSource = createDataSource()
-    private var searchBarIsEmpty: Bool {
-        guard let text = searchController.searchBar.text else { return false }
-        return text.isEmpty
-    }
-    private var listIndex = 0
+    var presenter: ContactListPresenterProtocol?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
@@ -38,7 +34,11 @@ class ContactListViewController: UIViewController {
         presenter?.tryRequest()
         // Do any additional setup after loading the view.
     }
-    
+
+}
+
+// MARK: - Set up UI
+extension ContactListViewController {
     private func configureViews() {
         tableView.register(ContactTableViewCell.self, forCellReuseIdentifier: ContactTableViewCell.reuseId)
         tableView.dataSource = dataSource
@@ -72,22 +72,12 @@ class ContactListViewController: UIViewController {
         definesPresentationContext = true
         navigationController?.navigationBar.isHidden = true
     }
-    
-    // MARK: - Navigation
-    /*
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 
+// MARK: ViewProtocol implementation
 extension ContactListViewController: ContactListViewProtocol {
     
     func updateContactList(_ list: [ContactPresentationModel]) {
-        contactList = list
         if list.count == 0 {
             nothingFoundLabel.isHidden = false
             tableView.isHidden = true
@@ -113,15 +103,14 @@ extension ContactListViewController: ContactListViewProtocol {
     
 }
 
+// MARK: SearchController
 extension ContactListViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        if searchController.searchBar.text != nil {
-            let listIsFiltered = searchController.isActive && !searchBarIsEmpty
-            presenter?.filterContacts(searchController.searchBar.text!, listIsFiltered: listIsFiltered)
-        }
+        presenter?.filterContacts(searchController.searchBar.text)
     }
 }
 
+// MARK: - Diffable Data source for TableView
 extension ContactListViewController {
     func createDataSource() -> UITableViewDiffableDataSource<String, ContactPresentationModel> {
         return UITableViewDiffableDataSource(
@@ -153,17 +142,13 @@ extension ContactListViewController {
     
 }
 
-
+// MARK: TableView Delegate
 extension ContactListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let indexPath = tableView.indexPathForSelectedRow {
-            let contactPresentationModel = contactList[indexPath.row]
+            let contactPresentationModel = dataSource.snapshot().itemIdentifiers[indexPath.row]
             let id = contactPresentationModel.id
             presenter?.openContact(id: id)
         }
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
     }
 }

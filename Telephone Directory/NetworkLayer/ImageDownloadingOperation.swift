@@ -1,5 +1,5 @@
 //
-//  ImageDownloader.swift
+//  ImageDownloadingOperation.swift
 //  Telephone Directory
 //
 //  Created by Diana Princess on 27.01.2023.
@@ -18,7 +18,7 @@ class AsyncOperation: Operation {
     override var isFinished: Bool {
         return state == .finished
     }
-    var state = OperationState.ready {
+    private var state = OperationState.ready {
         willSet {
             willChangeValue(forKey: newValue.keyPath)
             willChangeValue(forKey: state.keyPath)
@@ -30,17 +30,17 @@ class AsyncOperation: Operation {
     }
     
     override func start() {
-        if isCancelled {
-            state = .finished
-            return
-        }
-        main()
         state = .executing
+        main()
     }
     
     override func cancel() {
         super.cancel()
         state = .finished
+    }
+    
+    fileprivate func finish() {
+        cancel()
     }
 }
 
@@ -52,35 +52,45 @@ enum OperationState: String {
     }
 }
 
-class ImageDownloader: AsyncOperation {
-    var imageURL: String
-    var index: Int
-    var result: Result<Data, HTTPError>?
+class ImageDownloadingOperation: AsyncOperation {
+    private var imageURL: String
+    private var index: Int
+    private var result: Result<Data, HTTPError>?
     
-    init(imageURLString: String, index: Int) {
+    init(imageURLString: String, index: Int, completion: @escaping(Result<Data, HTTPError>) -> Void) {
         self.imageURL = imageURLString
         self.index = index
         super.init()
+        self.completionBlock = {
+            guard let result = self.result else { return }
+            switch result {
+            case .success(let success):
+                completion(.success(success))
+            case .failure(let failure):
+                completion(.failure(failure))
+            }
+        }
     }
     
     override func main() {
+        guard !isCancelled else { return }
         loadImage(from: imageURL) { response in
             print("Operation number \(self.index) started")
             switch response {
             case .success(let data):
                 guard let data = data else { return }
                 self.result = .success(data)
-                self.state = .finished
+                self.finish()
                 print("Operation number \(self.index) finished")
             case .failure(let error):
                 self.result = .failure(error)
-                self.state = .finished
+                self.finish()
                 print("Operation number \(self.index) finished")
             }
         }
     }
     
-    func loadImage(from text: String, completion: @escaping(Result<Data?, HTTPError>) -> Void) {
+    private func loadImage(from text: String, completion: @escaping(Result<Data?, HTTPError>) -> Void) {
         guard let photoUrl = URL(string: text) else { return }
         let request = URLRequest(url: photoUrl)
         URLSession.shared.dataTask(with: request){ data, response, error in
