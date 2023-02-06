@@ -7,7 +7,17 @@
 import UIKit
 
 protocol ContactListViewProtocol: AnyObject {
-    func updateContactList(_ list: [ContactPresentationModel])
-    func setRequestFailureView(error: Error)
-    func isLoading(_ isLoading: Bool)
+    func render(_ options: ContactListViewController.RenderOptions)
+}
+
+extension ContactListViewController {
+    public struct RenderOptions {
+        enum ProcessState {
+            case isLoading
+            case error(Error)
+            case updated([ContactPresentationModel])
+        }
+        let state: ProcessState
+        //let contactsList: [ContactPresentationModel]
+    }
 }

@@ -9,13 +9,13 @@ import Foundation
 protocol DownloadedContactsStorageProtocol {
     func setDataStorageIfEmpty(_ source: [ContactItem])
     func deactivateFiltering()
-    func downloadThumbnailForContact(at index: Int)
+    func updateThumbnailForContact(at index: Int, data: Data?, contact: ContactPresentationModel)
     func filterContactList(_ searchString: String)
     func getAContactDomainModelByID(id: String) -> ContactItem?
+    func getAContactPresentationModelByIndex(index: Int) -> ContactPresentationModel?
     var contactListFilteringState: ContactListFilteringState { get }
 }
 
 protocol DownloadedContactsStorageDelegate {
-    func requestThumbnailForContact(thumbnailURL: String, at index: Int, completion: @escaping(Result<Data, Error>) -> Void)
     func contactsStateDidChange(_ state: ContactListFilteringState)
 }

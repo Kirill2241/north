@@ -24,42 +24,34 @@ class OneContactViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter?.getContactInfo()
+        guard let contactInfo = presenter?.updateContactInfo() else { return }
+        contactImageView.image = UIImage(systemName: "person.fill")
+        fullNameLabel.text = contactInfo.fullname
+        self.phone = contactInfo.phone
+        phoneLabel.text = "Телефон: +"+contactInfo.phone
+        self.cell = contactInfo.cell
+        cellLabel.text = "Мобильный: +"+contactInfo.cell
+        mailLabel.text = contactInfo.email
+        presenter?.requestImage()
     }
     
     // MARK: IBACtions for buttons
     @IBAction private func callPhoneNumber(_ sender: UIButton) {
-        guard let phoneNumber = phone else { return }
-        guard let numberUrl = URL(string: "tel://"+phoneNumber) else { return }
-        UIApplication.shared.open(numberUrl)
+        presenter?.callNumber()
     }
     
     @IBAction private func callCellNumber(_ sender: UIButton) {
-        guard let cellNumber = cell else { return }
-        guard let numberUrl = URL(string: "tel://"+cellNumber) else { return }
-        UIApplication.shared.open(numberUrl)
+        presenter?.callCellNumber()
     }
     
     @IBAction private func sendSMSToCellNumber(_ sender: UIButton) {
-        if (MFMessageComposeViewController.canSendText()) {
-            let controller = MFMessageComposeViewController()
-            controller.body = "Message Body"
-            guard let unwrappedCell = cell else { return }
-            controller.recipients = [unwrappedCell]
-            controller.messageComposeDelegate = self
-            self.present(controller, animated: true, completion: nil)
-        }
+        guard let controller = presenter?.sendSMS() else { return }
+        self.present(controller, animated: true, completion: nil)
     }
     
     @IBAction private func sendSMSToPhoneNumber(_ sender: UIButton) {
-        if (MFMessageComposeViewController.canSendText()) {
-            let controller = MFMessageComposeViewController()
-            controller.body = "Message Body"
-            guard let unwrappedPhone = phone else { return }
-            controller.recipients = [unwrappedPhone]
-            controller.messageComposeDelegate = self
-            self.present(controller, animated: true, completion: nil)
-        }
+        guard let controller = presenter?.sendCellSMS() else { return }
+        self.present(controller, animated: true, completion: nil)
     }
     
     // MARK: function for TapGestureRecognizer
@@ -72,30 +64,6 @@ class OneContactViewController: UIViewController {
             self.present(vc, animated: false)
         }
     }
-}
-
-// MARK: OneContactViewProtocol implemenation
-extension OneContactViewController: OneContactViewProtocol {
-    func updateView(fullName: String, phone: String, cell: String, email: String) {
-        imageLoadingActivityIndicator.hidesWhenStopped = true
-        contactImageView.image = UIImage(systemName: "person.fill")
-        fullNameLabel.text = fullName
-        self.phone = phone
-        phoneLabel.text = "Телефон: +"+phone
-        self.cell = cell
-        cellLabel.text = "Мобильный: +"+cell
-        mailLabel.text = email
-        presenter?.requestImage()
-    }
-    
-    func setImage(data: Data) {
-        guard let image = UIImage(data: data) else { return }
-        self.contactImageView.image = image
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.enlargeImage(_:)))
-        tapGestureRecognizer.numberOfTouchesRequired = 1
-        self.contactImageView.isUserInteractionEnabled = true
-        self.contactImageView.addGestureRecognizer(tapGestureRecognizer)
-    }
     
     func setRequestFailureView(error: Error) {
         let alert = UIAlertController(title: "Не удалось загрузить изображение", message:  "Пожалуйста, проверьте подключение. Ошибка: "+error.localizedDescription, preferredStyle: UIAlertController.Style.alert)
@@ -104,15 +72,30 @@ extension OneContactViewController: OneContactViewProtocol {
         })
         self.present(alert, animated: true, completion: nil)
     }
-    
-    func imageIsLoading(_ isLoading: Bool) {
-        isLoading ? imageLoadingActivityIndicator.startAnimating() : imageLoadingActivityIndicator.stopAnimating()
-    }
 }
 
-// MARK: Delegate for messaging
-extension OneContactViewController: MFMessageComposeViewControllerDelegate {
-    func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
-        self.dismiss(animated: true, completion: nil)
+// MARK: OneContactViewProtocol implemenation
+extension OneContactViewController: OneContactViewProtocol {
+    func render(_ option: RenderOptions) {
+        switch option.imageState {
+        case .isLoading:
+            imageLoadingActivityIndicator.startAnimating()
+        case .error(let error):
+            imageLoadingActivityIndicator.stopAnimating()
+            setRequestFailureView(error: error)
+        case .downloaded(let data):
+            imageLoadingActivityIndicator.stopAnimating()
+            guard let data = data else { return }
+            guard let image = UIImage(data: data) else { return }
+            self.contactImageView.image = image
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.enlargeImage(_:)))
+            tapGestureRecognizer.numberOfTouchesRequired = 1
+            self.contactImageView.isUserInteractionEnabled = true
+            self.contactImageView.addGestureRecognizer(tapGestureRecognizer)
+        }
+    }
+    
+    func dismissMessageController(_ controller: MFMessageComposeViewController) {
+        controller.dismiss(animated: true)
     }
 }

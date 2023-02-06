@@ -10,7 +10,7 @@ import UIKit
 
 protocol ContactListPresenterProtocol {
     func tryRequest()
-    func filterContacts(_ searchText: String?)
     func downloadThumbnailForContact(at index: Int)
+    func filterContacts(_ searchText: String?)
     func openContact(id: String)
 }

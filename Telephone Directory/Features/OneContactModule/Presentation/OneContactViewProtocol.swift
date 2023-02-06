@@ -6,10 +6,20 @@
 //
 
 import UIKit
+import MessageUI
 
 protocol OneContactViewProtocol: AnyObject {
-    func updateView(fullName: String, phone: String, cell: String, email: String)
-    func setImage(data: Data)
-    func setRequestFailureView(error: Error)
-    func imageIsLoading(_ isLoading: Bool)
+    func render(_ option: OneContactViewController.RenderOptions)
+    func dismissMessageController(_ controller: MFMessageComposeViewController)
+}
+
+extension OneContactViewController {
+    struct RenderOptions {
+        enum ImageState {
+            case isLoading
+            case error(Error)
+            case downloaded(Data?)
+        }
+        let imageState: ImageState
+    }
 }

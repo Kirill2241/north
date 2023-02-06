@@ -34,14 +34,6 @@ class DownloadedContactsStorageService {
     private func insertNewContact(_ contact: ContactPresentationModel, at index: Int) {
         downloadedList.insert(contact, at: index)
     }
-    
-    private func getAContactPresentationModelByIndex(index: Int) -> ContactPresentationModel? {
-        if index > downloadedList.count-1 || index < 0 {
-            return nil
-        } else {
-            return downloadedList.remove(at: index)
-        }
-    }
 }
 
 // MARK: Protocol implemenation
@@ -60,20 +52,15 @@ extension DownloadedContactsStorageService: DownloadedContactsStorageProtocol {
         delegate?.contactsStateDidChange(.notFiltered(downloadedList))
     }
     
-    func downloadThumbnailForContact(at index: Int) {
-        guard let contact = getAContactPresentationModelByIndex(index: index) else { return }
-            if contact.thumbnailState == .notDownloaded {
-                delegate?.requestThumbnailForContact(thumbnailURL: contact.thumbnailString, at: index) { result in
-                    switch result {
-                    case .success(let imageData):
-                        let newContact = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailState: ContactThumbnailState.downloaded(imageData), id: contact.id)
-                        self.insertNewContact(newContact, at: index)
-                    case .failure(_):
-                        let newContact = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailState: ContactThumbnailState.failed, id: contact.id)
-                        self.insertNewContact(newContact, at: index)
-                    }
-                }
-            }
+    func updateThumbnailForContact(at index: Int, data: Data?, contact: ContactPresentationModel) {
+        switch data {
+        case .none:
+            let newContact = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailState: .failed, id: contact.id)
+            insertNewContact(newContact, at: index)
+        case .some(let data):
+            let newContact = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailState: .downloaded(data), id: contact.id)
+            insertNewContact(newContact, at: index)
+        }
         switch contactListFilteringState {
         case .notFiltered(_):
             deactivateFiltering()
@@ -82,6 +69,15 @@ extension DownloadedContactsStorageService: DownloadedContactsStorageProtocol {
             filterContactList(searchString)
         }
     }
+    
+    func getAContactPresentationModelByIndex(index: Int) -> ContactPresentationModel? {
+        if index > downloadedList.count-1 || index < 0 {
+            return nil
+        } else {
+            return downloadedList.remove(at: index)
+        }
+    }
+
     
     func filterContactList(_ searchString: String) {
         filterString = searchString

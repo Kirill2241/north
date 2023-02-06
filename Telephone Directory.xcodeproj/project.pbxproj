@@ -44,6 +44,7 @@
 		EBDD4282297F3A5000F22FF5 /* ImageDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD4281297F3A5000F22FF5 /* ImageDataCache.swift */; };
 		EBDD42862983FE3100F22FF5 /* DownloadedContactsStorageProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD42852983FE3100F22FF5 /* DownloadedContactsStorageProtocol.swift */; };
 		EBDD428829841DCB00F22FF5 /* ImageDownloadingOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD428729841DCB00F22FF5 /* ImageDownloadingOperation.swift */; };
+		EBDD428A298D4CFD00F22FF5 /* ContactDetailedInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD4289298D4CFD00F22FF5 /* ContactDetailedInfo.swift */; };
 		EBE30D5B2979190200F1DF00 /* DownloadedContactsStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE30D5A2979190200F1DF00 /* DownloadedContactsStorageService.swift */; };
 /* End PBXBuildFile section */
 
@@ -112,6 +113,7 @@
 		EBDD4281297F3A5000F22FF5 /* ImageDataCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataCache.swift; sourceTree = "<group>"; };
 		EBDD42852983FE3100F22FF5 /* DownloadedContactsStorageProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadedContactsStorageProtocol.swift; sourceTree = "<group>"; };
 		EBDD428729841DCB00F22FF5 /* ImageDownloadingOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloadingOperation.swift; sourceTree = "<group>"; };
+		EBDD4289298D4CFD00F22FF5 /* ContactDetailedInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailedInfo.swift; sourceTree = "<group>"; };
 		EBE30D5A2979190200F1DF00 /* DownloadedContactsStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadedContactsStorageService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -333,6 +335,7 @@
 		EBAB5794293A0D3400DCD66A /* OneContactModule */ = {
 			isa = PBXGroup;
 			children = (
+				EBDD428B298D4D0D00F22FF5 /* Models */,
 				EB5AF7202950A6D100AE4298 /* Presentation */,
 			);
 			path = OneContactModule;
@@ -353,6 +356,14 @@
 				EBAB57A22940858300DCD66A /* RouterProtocol.swift */,
 			);
 			path = Router;
+			sourceTree = "<group>";
+		};
+		EBDD428B298D4D0D00F22FF5 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				EBDD4289298D4CFD00F22FF5 /* ContactDetailedInfo.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		FACEA52EBA8A60032439E6F1 /* Frameworks */ = {
@@ -624,6 +635,7 @@
 				EBE30D5B2979190200F1DF00 /* DownloadedContactsStorageService.swift in Sources */,
 				EBAB57502937D63A00DCD66A /* SceneDelegate.swift in Sources */,
 				EBAB5793293A085700DCD66A /* OneContactPresenter.swift in Sources */,
+				EBDD428A298D4CFD00F22FF5 /* ContactDetailedInfo.swift in Sources */,
 				EBAB57A5294085BD00DCD66A /* ModuleBuilderProtocol.swift in Sources */,
 				EBAB577E2937D70900DCD66A /* ModuleBuilder.swift in Sources */,
 				EBAB57B12940A5BF00DCD66A /* CustomModalViewController.swift in Sources */,

@@ -24,39 +24,41 @@ class ContactListPresenter {
 
 // MARK: ContactListPresenterProtocol implementation
 extension ContactListPresenter: ContactListPresenterProtocol {
-    
     func tryRequest() {
         DispatchQueue.main.async {
-            self.view?.isLoading(true)
+            let loadingRenderOption = ContactListViewController.RenderOptions(state: .isLoading)
+            self.view?.render(loadingRenderOption)
         }
-        networkService.fetchContactList(number: 1000) { result in
-            switch result {
-            case .success(let contacts):
-                self.contactsStorageService?.setDataStorageIfEmpty(contacts)
-                DispatchQueue.main.async {
-                    self.view?.isLoading(false)
-                }
-                self.contactsStorageService.deactivateFiltering()
-            case .failure(let error):
-                DispatchQueue.main.async {
-                    self.view?.isLoading(false)
-                    self.view?.setRequestFailureView(error: error)
+        self.networkService.fetchContactList(number: 1000) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let contacts):
+                    self.contactsStorageService?.setDataStorageIfEmpty(contacts)
+                    self.contactsStorageService.deactivateFiltering()
+                case .failure(let error):
+                    let failureRenderOption = ContactListViewController.RenderOptions(state: .error(error))
+                    self.view?.render(failureRenderOption)
                 }
             }
         }
     }
     
     func downloadThumbnailForContact(at index: Int) {
-        contactsStorageService.downloadThumbnailForContact(at: index)
+        guard let contact = contactsStorageService.getAContactPresentationModelByIndex(index: index) else { return }
+        networkService.requestImage(urlString: contact.thumbnailString, index: index){ result in
+            switch result {
+            case .success(let data):
+                self.contactsStorageService.updateThumbnailForContact(at: index, data: data, contact: contact)
+                return
+            case .failure(_):
+                self.contactsStorageService.updateThumbnailForContact(at: index, data: nil, contact: contact)
+                return
+            }
+        }
     }
     
     func filterContacts(_ searchText: String?) {
-        if searchText == "" {
-            contactsStorageService.deactivateFiltering()
-        } else {
-            guard let searchText = searchText else { return }
-            contactsStorageService.filterContactList(searchText)
-        }
+        (searchText?.isEmpty ?? true) ? contactsStorageService.deactivateFiltering() : contactsStorageService.filterContactList(searchText!)
     }
     
     func openContact(id: String) {
@@ -67,26 +69,15 @@ extension ContactListPresenter: ContactListPresenterProtocol {
 
 // MARK: Implemenation of DownloadedContactsStorageDelegate
 extension ContactListPresenter: DownloadedContactsStorageDelegate {
-    func requestThumbnailForContact(thumbnailURL: String, at index: Int, completion: @escaping (Result<Data, Error>) -> Void) {
-        networkService.requestImage(urlString: thumbnailURL, index: index){ result in
-            switch result {
-            case .success(let data):
-                completion(.success(data))
-                return
-            case .failure(let error):
-                completion(.failure(error))
-                return
-            }
-        }
-    }
-    
     func contactsStateDidChange(_ state: ContactListFilteringState) {
         DispatchQueue.main.async {
             switch state {
             case .notFiltered(let fullArray):
-                self.view?.updateContactList(fullArray)
+                let notFilteredRenderOption = ContactListViewController.RenderOptions(state: .updated(fullArray))
+                self.view?.render(notFilteredRenderOption)
             case .filtered(let filteredArray):
-                self.view?.updateContactList(filteredArray)
+                let filteredRenderOption = ContactListViewController.RenderOptions(state: .updated(filteredArray))
+                self.view?.render(filteredRenderOption)
             }
         }
     }

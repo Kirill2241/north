@@ -72,35 +72,38 @@ extension ContactListViewController {
         definesPresentationContext = true
         navigationController?.navigationBar.isHidden = true
     }
-}
-
-// MARK: ViewProtocol implementation
-extension ContactListViewController: ContactListViewProtocol {
     
-    func updateContactList(_ list: [ContactPresentationModel]) {
-        if list.count == 0 {
-            nothingFoundLabel.isHidden = false
-            tableView.isHidden = true
-        } else {
-            nothingFoundLabel.isHidden = true
-            tableView.isHidden = false
-            navigationController?.navigationBar.isHidden = false
-            updateDataSource(list)
-        }
-    }
-    
-    func setRequestFailureView(error: Error){
+    private func setRequestFailureView(error: Error){
         let alert = UIAlertController(title: "При выполнении запроса произошла ошибка", message: "Пожалуйста, проверьте подключение. Ошибка: "+error.localizedDescription, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "Повторить попытку", style: UIAlertAction.Style.default){ _ in
             self.presenter?.tryRequest()
         })
         self.present(alert, animated: true, completion: nil)
     }
-    
-    func isLoading(_ isLoading: Bool) {
-        isLoading ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
+}
+
+// MARK: ViewProtocol implementation
+extension ContactListViewController: ContactListViewProtocol {
+    func render(_ options: RenderOptions) {
+        switch options.state {
+        case .isLoading:
+            activityIndicator.startAnimating()
+        case .error(let error):
+            activityIndicator.stopAnimating()
+            setRequestFailureView(error: error)
+        case .updated(let list):
+            activityIndicator.stopAnimating()
+            if list.count == 0 {
+                nothingFoundLabel.isHidden = false
+                tableView.isHidden = true
+            } else {
+                nothingFoundLabel.isHidden = true
+                tableView.isHidden = false
+                navigationController?.navigationBar.isHidden = false
+                updateDataSource(list)
+            }
+        }
     }
-    
 }
 
 // MARK: SearchController
