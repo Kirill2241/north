@@ -11,9 +11,10 @@ class NetworkService {
     private var imageDownloaderQueue: OperationQueue = {
         var queue = OperationQueue()
         queue.name = "Download queue"
-        queue.maxConcurrentOperationCount = 1
+        queue.maxConcurrentOperationCount = 10
         return queue
     }()
+    private var currentDownloadingOperations: [Int: Operation] = [:]
     private var imageDataCache: ImageDataCacheTypeProtocol
     init(imageDataCache: ImageDataCacheTypeProtocol) {
         self.imageDataCache = imageDataCache
@@ -52,14 +53,18 @@ class NetworkService {
     }
     
     private func loadImage(from text: String, index: Int, completion: @escaping(Result<Data?, HTTPError>) -> Void) {
+        guard currentDownloadingOperations[index] == nil else { return }
         let imageDownloader = ImageDownloadingOperation(imageURLString: text, index: index){ result in
             switch result {
             case .success(let data):
                 completion(.success(data))
+                self.currentDownloadingOperations.removeValue(forKey: index)
             case .failure(let error):
                 completion(.failure(error))
+                self.currentDownloadingOperations.removeValue(forKey: index)
             }
         }
+        currentDownloadingOperations[index] = imageDownloader
         imageDownloaderQueue.addOperation(imageDownloader)
     }
 }
@@ -70,7 +75,7 @@ extension NetworkService: NetworkServiceProtocol {
             self.loadContactList(number: number){ (result) in
                     switch result {
                     case .success(let result):
-                        let contactItemsArray = result.map{
+                        let contactItemsArray = result.map {
                             self.createNewContactItem(contact: $0)
                         }
                         completion(.success(contactItemsArray))
@@ -101,5 +106,23 @@ extension NetworkService: NetworkServiceProtocol {
                 completion(.success(foundImageData))
                 return
         }
+    }
+    
+    func operationQueueCurrentOperationIndexes(_ isSuspended: Bool, indexes: [Int]) -> [Int] {
+        imageDownloaderQueue.isSuspended = isSuspended
+        let allPendingOperations = Set(currentDownloadingOperations.map { $0.key })
+        var operationsToCancel = allPendingOperations
+        let chosenIndexes = Set(indexes.map{ $0 })
+        operationsToCancel.subtract(chosenIndexes)
+        var operationsToStart = chosenIndexes
+        operationsToStart.subtract(allPendingOperations)
+        for index in operationsToCancel {
+            if let pendingDownload = currentDownloadingOperations[index] {
+                pendingDownload.cancel()
+            }
+            currentDownloadingOperations.removeValue(forKey: index)
+        }
+        let indexesToDownloadImageTo = Array(operationsToStart.map{ $0 })
+        return indexesToDownloadImageTo
     }
 }

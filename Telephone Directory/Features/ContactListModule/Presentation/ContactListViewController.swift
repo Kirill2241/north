@@ -129,7 +129,9 @@ extension ContactListViewController {
                     cell.configure(fullName: contact.fullname, photo: defaultImage)
                 case .notDownloaded:
                     cell.configure(fullName: contact.fullname, photo: defaultImage)
-                    self.presenter?.downloadThumbnailForContact(at: indexPath.row)
+                    if !tableView.isDragging && !tableView.isDecelerating {
+                        self.presenter?.downloadThumbnailForContact(at: indexPath.row)
+                    }
                 }
                 return cell
             }
@@ -152,6 +154,24 @@ extension ContactListViewController: UITableViewDelegate {
             let contactPresentationModel = dataSource.snapshot().itemIdentifiers[indexPath.row]
             let id = contactPresentationModel.id
             presenter?.openContact(id: id)
+        }
+    }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        presenter?.imageDownloadingControl(true, [])
+    }
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            if let visibleRows = tableView.indexPathsForVisibleRows {
+                let indexes = visibleRows.map { $0.row }
+                presenter?.imageDownloadingControl(false, indexes)
+            }
+        }
+    }
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if let visibleRows = tableView.indexPathsForVisibleRows {
+            let indexes = visibleRows.map { $0.row }
+            presenter?.imageDownloadingControl(false, indexes)
         }
     }
 }

@@ -32,6 +32,7 @@ class OneContactViewController: UIViewController {
         self.cell = contactInfo.cell
         cellLabel.text = "Мобильный: +"+contactInfo.cell
         mailLabel.text = contactInfo.email
+        imageLoadingActivityIndicator.hidesWhenStopped = true
         presenter?.requestImage()
     }
     
