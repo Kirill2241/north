@@ -65,15 +65,6 @@ extension ContactListPresenter: ContactListPresenterProtocol {
         guard let contactItem = contactsStorageService.getAContactDomainModelByID(id: id) else { return }
         router?.openContact(contact: contactItem)
     }
-    
-    func imageDownloadingControl(_ downloadIsStopped: Bool, _ indexes: [Int] = []) {
-        let visibleRows = networkService.operationQueueCurrentOperationIndexes(downloadIsStopped, indexes: indexes)
-        if !visibleRows.isEmpty {
-            for rowIndex in visibleRows {
-                downloadThumbnailForContact(at: rowIndex)
-            }
-        }
-    }
 }
 
 // MARK: Implemenation of DownloadedContactsStorageDelegate

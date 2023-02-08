@@ -45,6 +45,7 @@
 		EBDD42862983FE3100F22FF5 /* DownloadedContactsStorageProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD42852983FE3100F22FF5 /* DownloadedContactsStorageProtocol.swift */; };
 		EBDD428829841DCB00F22FF5 /* ImageDownloadingOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD428729841DCB00F22FF5 /* ImageDownloadingOperation.swift */; };
 		EBDD428A298D4CFD00F22FF5 /* ContactDetailedInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD4289298D4CFD00F22FF5 /* ContactDetailedInfo.swift */; };
+		EBDD42902992A23700F22FF5 /* OperationStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD428F2992A23700F22FF5 /* OperationStack.swift */; };
 		EBE30D5B2979190200F1DF00 /* DownloadedContactsStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE30D5A2979190200F1DF00 /* DownloadedContactsStorageService.swift */; };
 /* End PBXBuildFile section */
 
@@ -114,6 +115,7 @@
 		EBDD42852983FE3100F22FF5 /* DownloadedContactsStorageProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadedContactsStorageProtocol.swift; sourceTree = "<group>"; };
 		EBDD428729841DCB00F22FF5 /* ImageDownloadingOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloadingOperation.swift; sourceTree = "<group>"; };
 		EBDD4289298D4CFD00F22FF5 /* ContactDetailedInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailedInfo.swift; sourceTree = "<group>"; };
+		EBDD428F2992A23700F22FF5 /* OperationStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationStack.swift; sourceTree = "<group>"; };
 		EBE30D5A2979190200F1DF00 /* DownloadedContactsStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadedContactsStorageService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -326,6 +328,7 @@
 			children = (
 				EBAB57832937D91B00DCD66A /* NetworkService.swift */,
 				EBDD428729841DCB00F22FF5 /* ImageDownloadingOperation.swift */,
+				EBDD428F2992A23700F22FF5 /* OperationStack.swift */,
 				EB4FC4A62954F00800A9F506 /* NetworkServiceProtocol.swift */,
 				EBAB578E2939174C00DCD66A /* ContactsNetworkResponse.swift */,
 			);
@@ -620,6 +623,7 @@
 				EB4FC4BA297081EF00A9F506 /* ContactPresentationModel.swift in Sources */,
 				EBDD428829841DCB00F22FF5 /* ImageDownloadingOperation.swift in Sources */,
 				EB4FC4AE2954F31100A9F506 /* ContactItem.swift in Sources */,
+				EBDD42902992A23700F22FF5 /* OperationStack.swift in Sources */,
 				EBAB578D2939160600DCD66A /* TelephoneDirectory.xcdatamodeld in Sources */,
 				EBAB57522937D63A00DCD66A /* OneContactViewController.swift in Sources */,
 				EBAB57862937D98200DCD66A /* ContactListViewController.swift in Sources */,

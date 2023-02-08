@@ -8,13 +8,14 @@
 import Foundation
 
 class NetworkService {
-    private var imageDownloaderQueue: OperationQueue = {
-        var queue = OperationQueue()
-        queue.name = "Download queue"
-        queue.maxConcurrentOperationCount = 10
-        return queue
-    }()
-    private var currentDownloadingOperations: [Int: Operation] = [:]
+//    private var imageDownloaderQueue: OperationQueue = {
+//        var queue = OperationQueue()
+//        queue.name = "Download queue"
+//        queue.maxConcurrentOperationCount = 10
+//        return queue
+//    }()
+    private var operationStack = OperationStack()
+    private var cancelledOperations: [Int: Operation] = [:]
     private var imageDataCache: ImageDataCacheTypeProtocol
     init(imageDataCache: ImageDataCacheTypeProtocol) {
         self.imageDataCache = imageDataCache
@@ -53,24 +54,19 @@ class NetworkService {
     }
     
     private func loadImage(from text: String, index: Int, completion: @escaping(Result<Data?, HTTPError>) -> Void) {
-        guard currentDownloadingOperations[index] == nil else { return }
-        let imageDownloader = ImageDownloadingOperation(imageURLString: text, index: index){ result in
+        let imageDownloadingOperation = ImageDownloadingOperation(imageURLString: text, index: index){ result in
             switch result {
             case .success(let data):
                 completion(.success(data))
-                self.currentDownloadingOperations.removeValue(forKey: index)
             case .failure(let error):
                 completion(.failure(error))
-                self.currentDownloadingOperations.removeValue(forKey: index)
             }
         }
-        currentDownloadingOperations[index] = imageDownloader
-        imageDownloaderQueue.addOperation(imageDownloader)
+        operationStack.push(operation: imageDownloadingOperation, index: index)
     }
 }
 
 extension NetworkService: NetworkServiceProtocol {
-    
     func fetchContactList(number: Int, completion: @escaping(Result<[ContactItem], Error>) -> Void) {
             self.loadContactList(number: number){ (result) in
                     switch result {
@@ -106,23 +102,10 @@ extension NetworkService: NetworkServiceProtocol {
                 completion(.success(foundImageData))
                 return
         }
-    }
-    
-    func operationQueueCurrentOperationIndexes(_ isSuspended: Bool, indexes: [Int]) -> [Int] {
-        imageDownloaderQueue.isSuspended = isSuspended
-        let allPendingOperations = Set(currentDownloadingOperations.map { $0.key })
-        var operationsToCancel = allPendingOperations
-        let chosenIndexes = Set(indexes.map{ $0 })
-        operationsToCancel.subtract(chosenIndexes)
-        var operationsToStart = chosenIndexes
-        operationsToStart.subtract(allPendingOperations)
-        for index in operationsToCancel {
-            if let pendingDownload = currentDownloadingOperations[index] {
-                pendingDownload.cancel()
+        if operationStack.count() >= 20 {
+            for _ in 0...(operationStack.count()-20) {
+                cancelledOperations[index] = operationStack.pop().1
             }
-            currentDownloadingOperations.removeValue(forKey: index)
         }
-        let indexesToDownloadImageTo = Array(operationsToStart.map{ $0 })
-        return indexesToDownloadImageTo
     }
 }
