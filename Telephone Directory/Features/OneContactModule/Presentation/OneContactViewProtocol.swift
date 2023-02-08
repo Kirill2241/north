@@ -19,6 +19,7 @@ extension OneContactViewController {
             case isLoading
             case error(Error)
             case downloaded(Data?)
+            case smsComposing(_ controller: MFMessageComposeViewController)
         }
         let imageState: ImageState
     }

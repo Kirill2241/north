@@ -11,7 +11,7 @@ protocol ContactListViewProtocol: AnyObject {
 }
 
 extension ContactListViewController {
-    public struct RenderOptions {
+    struct RenderOptions {
         enum ProcessState {
             case isLoading
             case error(Error)

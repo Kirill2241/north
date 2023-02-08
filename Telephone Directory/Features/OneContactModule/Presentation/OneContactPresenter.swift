@@ -62,41 +62,32 @@ class OneContactPresenter: NSObject {
 
 // MARK: OneContactPresenterProtocol implementation
 extension OneContactPresenter: OneContactPresenterProtocol {
-    func callNumber() {
-        guard let phoneNumber = phoneNumber else { return }
-        guard let numberUrl = URL(string: "tel://"+phoneNumber) else { return }
-        UIApplication.shared.open(numberUrl)
-    }
-    
-    func callCellNumber() {
-        guard let cellNumber = cellPhoneNumber else { return }
-        guard let numberUrl = URL(string: "tel://"+cellNumber) else { return }
-        UIApplication.shared.open(numberUrl)
-    }
-    
-    func sendSMS() -> MFMessageComposeViewController? {
-        if (MFMessageComposeViewController.canSendText()) {
-            let controller = MFMessageComposeViewController()
-            controller.body = "Message Body"
-            guard let unwrappedPhone = phoneNumber else { return MFMessageComposeViewController() }
-            controller.recipients = [unwrappedPhone]
-            controller.messageComposeDelegate = self
-            return controller
-        } else {
-            return nil
+    func makeACall(type: PhoneTypes) {
+        var phone: String
+        switch type {
+        case .regular:
+            phone = self.phoneNumber ?? ""
+        case .cell:
+            phone = self.cellPhoneNumber ?? ""
         }
+        guard let numberUrl = URL(string: "tel://"+phone) else { return }
+        UIApplication.shared.open(numberUrl)
+        
     }
-    
-    func sendCellSMS() -> MFMessageComposeViewController? {
+    func sendSMS(type: PhoneTypes){
+        var phone: String
+        switch type {
+        case .regular:
+            phone = self.phoneNumber ?? ""
+        case .cell:
+            phone = self.cellPhoneNumber ?? ""
+        }
         if (MFMessageComposeViewController.canSendText()) {
             let controller = MFMessageComposeViewController()
             controller.body = "Message Body"
-            guard let unwrappedCell = cellPhoneNumber else { return MFMessageComposeViewController() }
-            controller.recipients = [unwrappedCell]
+            controller.recipients = [phone]
             controller.messageComposeDelegate = self
-            return controller
-        } else {
-            return nil
+            view?.render(OneContactViewController.RenderOptions(imageState: .smsComposing(controller)))
         }
     }
     

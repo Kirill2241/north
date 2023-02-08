@@ -115,7 +115,7 @@ extension ContactListViewController: UISearchResultsUpdating {
 
 // MARK: - Diffable Data source for TableView
 extension ContactListViewController {
-    func createDataSource() -> UITableViewDiffableDataSource<String, ContactPresentationModel> {
+    private func createDataSource() -> UITableViewDiffableDataSource<String, ContactPresentationModel> {
         return UITableViewDiffableDataSource(
             tableView: self.tableView,
             cellProvider: { tableView,indexPath,contact in
@@ -136,7 +136,7 @@ extension ContactListViewController {
         )
     }
     
-    func updateDataSource(_ contacts: [ContactPresentationModel]) {
+    private func updateDataSource(_ contacts: [ContactPresentationModel]) {
         var snapshot = NSDiffableDataSourceSnapshot<String, ContactPresentationModel>()
         snapshot.appendSections(["1"])
         snapshot.appendItems(contacts)

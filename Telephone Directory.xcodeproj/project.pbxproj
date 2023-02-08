@@ -45,6 +45,7 @@
 		EBDD42862983FE3100F22FF5 /* DownloadedContactsStorageProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD42852983FE3100F22FF5 /* DownloadedContactsStorageProtocol.swift */; };
 		EBDD428829841DCB00F22FF5 /* ImageDownloadingOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD428729841DCB00F22FF5 /* ImageDownloadingOperation.swift */; };
 		EBDD428A298D4CFD00F22FF5 /* ContactDetailedInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD4289298D4CFD00F22FF5 /* ContactDetailedInfo.swift */; };
+		EBDD42922993FA2400F22FF5 /* PhoneTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD42912993FA2400F22FF5 /* PhoneTypes.swift */; };
 		EBE30D5B2979190200F1DF00 /* DownloadedContactsStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE30D5A2979190200F1DF00 /* DownloadedContactsStorageService.swift */; };
 /* End PBXBuildFile section */
 
@@ -114,6 +115,7 @@
 		EBDD42852983FE3100F22FF5 /* DownloadedContactsStorageProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadedContactsStorageProtocol.swift; sourceTree = "<group>"; };
 		EBDD428729841DCB00F22FF5 /* ImageDownloadingOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloadingOperation.swift; sourceTree = "<group>"; };
 		EBDD4289298D4CFD00F22FF5 /* ContactDetailedInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailedInfo.swift; sourceTree = "<group>"; };
+		EBDD42912993FA2400F22FF5 /* PhoneTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneTypes.swift; sourceTree = "<group>"; };
 		EBE30D5A2979190200F1DF00 /* DownloadedContactsStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadedContactsStorageService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -362,6 +364,7 @@
 			isa = PBXGroup;
 			children = (
 				EBDD4289298D4CFD00F22FF5 /* ContactDetailedInfo.swift */,
+				EBDD42912993FA2400F22FF5 /* PhoneTypes.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -626,6 +629,7 @@
 				EBAB574E2937D63A00DCD66A /* AppDelegate.swift in Sources */,
 				EBAB57912939316900DCD66A /* HTTPError.swift in Sources */,
 				EBAB57A32940858300DCD66A /* RouterProtocol.swift in Sources */,
+				EBDD42922993FA2400F22FF5 /* PhoneTypes.swift in Sources */,
 				EBAB57802937D77C00DCD66A /* Router.swift in Sources */,
 				EBAB57AF2940870A00DCD66A /* OneContactViewProtocol.swift in Sources */,
 				EB4FC4A72954F00800A9F506 /* NetworkServiceProtocol.swift in Sources */,

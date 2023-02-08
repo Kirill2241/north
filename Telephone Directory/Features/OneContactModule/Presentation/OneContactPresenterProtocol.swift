@@ -11,8 +11,6 @@ import MessageUI
 protocol OneContactPresenterProtocol: AnyObject {
     func updateContactInfo() -> ContactDetailedInfo
     func requestImage()
-    func callNumber()
-    func callCellNumber()
-    func sendSMS() -> MFMessageComposeViewController?
-    func sendCellSMS() -> MFMessageComposeViewController?
+    func makeACall(type: PhoneTypes)
+    func sendSMS(type: PhoneTypes)
 }

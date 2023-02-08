@@ -37,21 +37,19 @@ class OneContactViewController: UIViewController {
     
     // MARK: IBACtions for buttons
     @IBAction private func callPhoneNumber(_ sender: UIButton) {
-        presenter?.callNumber()
+        presenter?.makeACall(type: .regular)
     }
     
     @IBAction private func callCellNumber(_ sender: UIButton) {
-        presenter?.callCellNumber()
+        presenter?.makeACall(type: .cell)
     }
     
     @IBAction private func sendSMSToCellNumber(_ sender: UIButton) {
-        guard let controller = presenter?.sendSMS() else { return }
-        self.present(controller, animated: true, completion: nil)
+        presenter?.sendSMS(type: .cell)
     }
     
     @IBAction private func sendSMSToPhoneNumber(_ sender: UIButton) {
-        guard let controller = presenter?.sendCellSMS() else { return }
-        self.present(controller, animated: true, completion: nil)
+        presenter?.sendSMS(type: .regular)
     }
     
     // MARK: function for TapGestureRecognizer
@@ -92,6 +90,8 @@ extension OneContactViewController: OneContactViewProtocol {
             tapGestureRecognizer.numberOfTouchesRequired = 1
             self.contactImageView.isUserInteractionEnabled = true
             self.contactImageView.addGestureRecognizer(tapGestureRecognizer)
+        case .smsComposing(let controller):
+            self.present(controller, animated: true)
         }
     }
     

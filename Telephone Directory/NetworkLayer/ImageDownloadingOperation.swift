@@ -40,8 +40,7 @@ class AsyncOperation: Operation {
     }
     
     fileprivate func finish() {
-        //cancel()
-        state = .finished
+        cancel()
     }
 }
 
