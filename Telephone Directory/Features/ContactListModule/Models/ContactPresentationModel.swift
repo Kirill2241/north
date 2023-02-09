@@ -10,7 +10,7 @@ import Foundation
 struct ContactPresentationModel: Hashable {
     let fullname: String
     let thumbnailString: String
-    let thumbnailState: ContactThumbnailState
+    var thumbnailState: ContactThumbnailState
     let id: String
 }
 

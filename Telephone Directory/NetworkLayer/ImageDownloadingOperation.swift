@@ -54,12 +54,10 @@ enum OperationState: String {
 
 class ImageDownloadingOperation: AsyncOperation {
     private var imageURL: String
-    private var index: Int
     private var resultHandler: ((Result<Data, HTTPError>) -> Void)?
     
-    init(imageURLString: String, index: Int, completion: @escaping(Result<Data, HTTPError>) -> Void) {
+    init(imageURLString: String, completion: @escaping(Result<Data, HTTPError>) -> Void) {
         self.imageURL = imageURLString
-        self.index = index
         resultHandler = completion
         super.init()
     }
@@ -73,7 +71,6 @@ class ImageDownloadingOperation: AsyncOperation {
         guard !isCancelled else { return }
         loadImage(from: imageURL) { [ weak self ] response in
             guard let self, !self.isCancelled else { return }
-            print("Operation number \(self.index) started")
             switch response {
             case .success(let data):
                 self.resultHandler?(.success(data))

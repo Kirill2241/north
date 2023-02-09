@@ -124,11 +124,11 @@ extension ContactListViewController {
                 switch contact.thumbnailState {
                 case .downloaded(let data):
                     let image = UIImage(data: data)!
-                    cell.configure(fullName: contact.fullname, photo: image)
+                    cell.configure(fullName: contact.fullname, photo: image, photoStatus: contact.thumbnailState)
                 case .failed:
-                    cell.configure(fullName: contact.fullname, photo: defaultImage)
+                    cell.configure(fullName: contact.fullname, photo: defaultImage, photoStatus: contact.thumbnailState)
                 case .notDownloaded:
-                    cell.configure(fullName: contact.fullname, photo: defaultImage)
+                    cell.configure(fullName: contact.fullname, photo: defaultImage, photoStatus: contact.thumbnailState)
                     self.presenter?.downloadThumbnailForContact(at: indexPath.row)
                 }
                 return cell

@@ -10,17 +10,17 @@ import MessageUI
 
 protocol OneContactViewProtocol: AnyObject {
     func render(_ option: OneContactViewController.RenderOptions)
-    func dismissMessageController(_ controller: MFMessageComposeViewController)
 }
 
 extension OneContactViewController {
     struct RenderOptions {
-        enum ImageState {
-            case isLoading
+        enum ScreenState {
+            case imageIsLoading
             case error(Error)
             case downloaded(Data?)
             case smsComposing(_ controller: MFMessageComposeViewController)
+            case smsComposingEnded(_ controller: MFMessageComposeViewController)
         }
-        let imageState: ImageState
+        let screenState: ScreenState
     }
 }

@@ -18,6 +18,5 @@ extension ContactListViewController {
             case updated([ContactPresentationModel])
         }
         let state: ProcessState
-        //let contactsList: [ContactPresentationModel]
     }
 }

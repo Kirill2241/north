@@ -50,7 +50,7 @@ class OneContactPresenter: NSObject {
         self.cellPhoneNumber = phoneTuple.1
     }
     
-    func setUpPhones(phone: String, cell: String, nat: String) -> (String, String) {
+    private func setUpPhones(phone: String, cell: String, nat: String) -> (String, String) {
         guard let countryCode = countryCodes[nat] else { return ("", "")}
         let unfilteredPhone = countryCode+"-"+phone
         let unfilteredCell = countryCode+"-"+cell
@@ -58,36 +58,35 @@ class OneContactPresenter: NSObject {
         let fullCell = unfilteredCell.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
         return (fullPhone, fullCell)
     }
+    
+    private func getNecessaryPhone(type: PhoneTypes) -> String {
+        switch type {
+        case .regular:
+            guard let phoneNumber = phoneNumber else { return "" }
+            return phoneNumber
+        case .cell:
+            guard let cellPhoneNumber = cellPhoneNumber else { return "" }
+            return cellPhoneNumber
+        }
+    }
 }
 
 // MARK: OneContactPresenterProtocol implementation
 extension OneContactPresenter: OneContactPresenterProtocol {
     func makeACall(type: PhoneTypes) {
-        var phone: String
-        switch type {
-        case .regular:
-            phone = self.phoneNumber ?? ""
-        case .cell:
-            phone = self.cellPhoneNumber ?? ""
-        }
+        let phone = getNecessaryPhone(type: type)
         guard let numberUrl = URL(string: "tel://"+phone) else { return }
         UIApplication.shared.open(numberUrl)
-        
     }
-    func sendSMS(type: PhoneTypes){
-        var phone: String
-        switch type {
-        case .regular:
-            phone = self.phoneNumber ?? ""
-        case .cell:
-            phone = self.cellPhoneNumber ?? ""
-        }
+    
+    func sendSMS(type: PhoneTypes) {
+        let phone = getNecessaryPhone(type: type)
         if (MFMessageComposeViewController.canSendText()) {
             let controller = MFMessageComposeViewController()
             controller.body = "Message Body"
             controller.recipients = [phone]
             controller.messageComposeDelegate = self
-            view?.render(OneContactViewController.RenderOptions(imageState: .smsComposing(controller)))
+            view?.render(OneContactViewController.RenderOptions(screenState: .smsComposing(controller)))
         }
     }
     
@@ -102,27 +101,26 @@ extension OneContactPresenter: OneContactPresenterProtocol {
     
     func requestImage() {
         DispatchQueue.main.async {
-            let loadingOption = OneContactViewController.RenderOptions(imageState: .isLoading)
+            let loadingOption = OneContactViewController.RenderOptions(screenState: .imageIsLoading)
             self.view?.render(loadingOption)
         }
-        networkService.requestImage(urlString: contactItem.largeImageStr, index: -1) { result in
+        networkService.requestImage(urlString: contactItem.largeImageStr, type: .large) { result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let data):
-                    let successOption = OneContactViewController.RenderOptions(imageState: .downloaded(data))
+                    let successOption = OneContactViewController.RenderOptions(screenState: .downloaded(data))
                     self.view?.render(successOption)
                 case .failure(let error):
-                    let failureOption = OneContactViewController.RenderOptions(imageState: .error(error))
+                    let failureOption = OneContactViewController.RenderOptions(screenState: .error(error))
                     self.view?.render(failureOption)
                 }
             }
         }
     }
-    
 }
 
 extension OneContactPresenter: MFMessageComposeViewControllerDelegate {
     func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
-        view?.dismissMessageController(controller)
+        view?.render(OneContactViewController.RenderOptions(screenState: .smsComposingEnded(controller)))
     }
 }

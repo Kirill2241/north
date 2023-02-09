@@ -31,8 +31,8 @@ class DownloadedContactsStorageService {
         return (contactList, contactsDict)
     }
     
-    private func insertNewContact(_ contact: ContactPresentationModel, at index: Int) {
-        downloadedList.insert(contact, at: index)
+    private func updateThumbnail(at index: Int, state: ContactThumbnailState) {
+        downloadedList[index].thumbnailState = state
     }
 }
 
@@ -52,14 +52,12 @@ extension DownloadedContactsStorageService: DownloadedContactsStorageProtocol {
         delegate?.contactsStateDidChange(.notFiltered(downloadedList))
     }
     
-    func updateThumbnailForContact(at index: Int, data: Data?, contact: ContactPresentationModel) {
+    func updateThumbnailForContact(at index: Int, data: Data?) {
         switch data {
         case .none:
-            let newContact = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailState: .failed, id: contact.id)
-            insertNewContact(newContact, at: index)
+            updateThumbnail(at: index, state: .failed)
         case .some(let data):
-            let newContact = ContactPresentationModel(fullname: contact.fullname, thumbnailString: contact.thumbnailString, thumbnailState: .downloaded(data), id: contact.id)
-            insertNewContact(newContact, at: index)
+            updateThumbnail(at: index, state: .downloaded(data))
         }
         switch contactListFilteringState {
         case .notFiltered(_):
@@ -74,10 +72,9 @@ extension DownloadedContactsStorageService: DownloadedContactsStorageProtocol {
         if index > downloadedList.count-1 || index < 0 {
             return nil
         } else {
-            return downloadedList.remove(at: index)
+            return downloadedList[index]
         }
     }
-
     
     func filterContactList(_ searchString: String) {
         filterString = searchString

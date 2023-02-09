@@ -19,17 +19,14 @@ class OneContactViewController: UIViewController {
     @IBOutlet private weak var imageLoadingActivityIndicator: UIActivityIndicatorView!
     
     var presenter: OneContactPresenterProtocol?
-    private var phone: String?
-    private var cell: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         guard let contactInfo = presenter?.updateContactInfo() else { return }
+        imageLoadingActivityIndicator.hidesWhenStopped = true
         contactImageView.image = UIImage(systemName: "person.fill")
         fullNameLabel.text = contactInfo.fullname
-        self.phone = contactInfo.phone
         phoneLabel.text = "Телефон: +"+contactInfo.phone
-        self.cell = contactInfo.cell
         cellLabel.text = "Мобильный: +"+contactInfo.cell
         mailLabel.text = contactInfo.email
         presenter?.requestImage()
@@ -75,8 +72,8 @@ class OneContactViewController: UIViewController {
 // MARK: OneContactViewProtocol implemenation
 extension OneContactViewController: OneContactViewProtocol {
     func render(_ option: RenderOptions) {
-        switch option.imageState {
-        case .isLoading:
+        switch option.screenState {
+        case .imageIsLoading:
             imageLoadingActivityIndicator.startAnimating()
         case .error(let error):
             imageLoadingActivityIndicator.stopAnimating()
@@ -92,10 +89,8 @@ extension OneContactViewController: OneContactViewProtocol {
             self.contactImageView.addGestureRecognizer(tapGestureRecognizer)
         case .smsComposing(let controller):
             self.present(controller, animated: true)
+        case .smsComposingEnded(let controller):
+            controller.dismiss(animated: true)
         }
-    }
-    
-    func dismissMessageController(_ controller: MFMessageComposeViewController) {
-        controller.dismiss(animated: true)
     }
 }

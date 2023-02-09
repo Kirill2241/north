@@ -9,8 +9,6 @@ import UIKit
 import SnapKit
 
 class ContactTableViewCell: UITableViewCell {
-
-    
     private let contactPhotoImageView: UIImageView = {
         let imgView = UIImageView()
         imgView.contentMode = .scaleAspectFit
@@ -18,7 +16,6 @@ class ContactTableViewCell: UITableViewCell {
         imgView.layer.cornerRadius = 15
         return imgView
     }()
-    
     private let fullNameLabel: UILabel = {
         let lbl = UILabel()
         lbl.textAlignment = .left
@@ -27,6 +24,8 @@ class ContactTableViewCell: UITableViewCell {
         lbl.font = UIFont.systemFont(ofSize: 16)
         return lbl
     }()
+    private let activityIndicator = UIActivityIndicatorView(style: .medium)
+    
     static let reuseId = "reuseId"
     
     override func awakeFromNib() {
@@ -47,6 +46,8 @@ class ContactTableViewCell: UITableViewCell {
     private func placeSubviews() {
         contentView.addSubview(contactPhotoImageView)
         contentView.addSubview(fullNameLabel)
+        activityIndicator.hidesWhenStopped = true
+        contactPhotoImageView.addSubview(activityIndicator)
     }
     
     private func setUpConstraints() {
@@ -61,11 +62,15 @@ class ContactTableViewCell: UITableViewCell {
             maker.height.equalTo(20)
             maker.trailing.equalToSuperview().inset(10)
         }
+        activityIndicator.snp.makeConstraints{ (maker) in
+            maker.centerX.equalToSuperview()
+            maker.centerY.equalToSuperview()
+        }
     }
     
-    func configure(fullName: String, photo: UIImage) {
+    func configure(fullName: String, photo: UIImage, photoStatus: ContactThumbnailState) {
         contactPhotoImageView.image = photo
         fullNameLabel.text = fullName
+        (photoStatus == .notDownloaded) ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
     }
-
 }
