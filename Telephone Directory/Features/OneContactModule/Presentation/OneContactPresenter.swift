@@ -113,6 +113,9 @@ extension OneContactPresenter: OneContactPresenterProtocol {
                 case .failure(let error):
                     let failureOption = OneContactViewController.RenderOptions(screenState: .error(error))
                     self.view?.render(failureOption)
+                case .isCancelled:
+                    let cancelledOption = OneContactViewController.RenderOptions(screenState: .cancelled)
+                    self.view?.render(cancelledOption)
                 }
             }
         }

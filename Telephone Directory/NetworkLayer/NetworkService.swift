@@ -8,13 +8,14 @@
 import Foundation
 
 class NetworkService {
-    private var imageDownloaderQueue: OperationQueue = {
+    static private let operationLimit = 20
+    private lazy var imageDownloaderQueue: OperationQueue = {
         var queue = OperationQueue()
         queue.name = "Download queue"
-        queue.maxConcurrentOperationCount = 20
+        queue.maxConcurrentOperationCount = Self.operationLimit
         return queue
     }()
-    private var operationStack = OperationStack()
+    private lazy var operationStack = OperationStack(operationLimit: Self.operationLimit)
     private var imageDataCache: ImageDataCacheTypeProtocol
     init(imageDataCache: ImageDataCacheTypeProtocol) {
         self.imageDataCache = imageDataCache
@@ -52,29 +53,22 @@ class NetworkService {
         return ContactItem(fullname: fullname, email: contact.email, phone: contact.phone, cell: contact.cell, largeImageStr: largeImageStr, nat: contact.nat, thumbnailString: contact.picture.thumbnail)
     }
     
-    private func loadImage(from text: String, type: RequestedImageType, completion: @escaping(Result<Data?, HTTPError>) -> Void) {
+    private func loadImage(from text: String, type: RequestedImageType, completion: @escaping(ImageDownloadingResult) -> Void) {
         let imageDownloader = ImageDownloadingOperation(imageURLString: text){ result in
             switch result {
             case .success(let data):
                 completion(.success(data))
             case .failure(let error):
                 completion(.failure(error))
+            case .isCancelled:
+                completion(.isCancelled)
             }
         }
         switch type {
         case .thumbnail:
+            imageDownloaderQueue.addOperation(imageDownloader)
             operationStack.push(imageDownloader)
-            if operationStack.count() >= 40 {
-                for i in stride(from: operationStack.count()-1, through: 0, by: -1) {
-                    if i > 20 {
-                        guard let imageDownloadingOperation = operationStack.popLast() else { return }
-                        imageDownloaderQueue.addOperation(imageDownloadingOperation)
-                    } else {
-                        guard let imageDownloadingOperation = operationStack.popFirst() else { return }
-                        imageDownloadingOperation.cancel()
-                    }
-                }
-            }
+            operationStack.trimOperationsIfNeeded()
         case .large:
             imageDownloaderQueue.addOperation(imageDownloader)
         }
@@ -97,19 +91,21 @@ extension NetworkService: NetworkServiceProtocol {
         return
     }
     
-    func requestImage(urlString: String, type: RequestedImageType, completion: @escaping(Result<Data, Error>) -> Void) {
+    func requestImage(urlString: String, type: RequestedImageType, completion: @escaping(ImageDownloadingResult) -> Void) {
         let imageData = imageDataCache.lookForImageData(for: urlString)
         switch imageData {
             case .none:
             loadImage(from: urlString, type: type) { result in
                 switch result {
                 case .success(let data):
-                    guard let data = data else { return }
                     self.imageDataCache.insertImageData(data, for: urlString)
                     completion(.success(data))
                     return
                 case .failure(let error):
                     completion(.failure(error))
+                    return
+                case .isCancelled:
+                    completion(.isCancelled)
                     return
                 }
             }

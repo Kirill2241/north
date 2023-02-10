@@ -7,22 +7,30 @@
 
 import Foundation
 
-struct OperationStack {
+class OperationStack {
+    private let operationLimit: Int
+
     private var array: [Operation] = []
     
-    mutating func push(_ operation: Operation) {
+    init(operationLimit: Int) {
+        self.operationLimit = operationLimit
+    }
+    
+    func push(_ operation: Operation) {
         array.append(operation)
     }
     
-    mutating func popFirst() -> Operation? {
-        return array.removeFirst()
+    func exceedingLimit() -> Int {
+        return (array.count - operationLimit <= 0) ? 0 : array.count - operationLimit
     }
     
-    mutating func popLast() -> Operation? {
-        return array.removeLast()
+    func trimOperationsIfNeeded() {
+        while exceedingLimit() > 0  {
+            popFirst()?.cancel()
+        }
     }
     
-    func count() -> Int {
-        return array.count
-    }
+    private func popFirst() -> Operation? {
+       return array.removeFirst()
+   }
 }

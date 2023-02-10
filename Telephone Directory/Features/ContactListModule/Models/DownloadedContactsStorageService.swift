@@ -52,13 +52,26 @@ extension DownloadedContactsStorageService: DownloadedContactsStorageProtocol {
         delegate?.contactsStateDidChange(.notFiltered(downloadedList))
     }
     
-    func updateThumbnailForContact(at index: Int, data: Data?) {
-        switch data {
-        case .none:
+    func updateThumbnailForContact(at index: Int, imageDownloadingStatus: ImageDownloadingResult) {
+        switch imageDownloadingStatus {
+        case .isCancelled:
+            updateThumbnail(at: index, state: .notDownloaded)
+        case .success(let data):
+            switch data {
+            case .none:
+                updateThumbnail(at: index, state: .failed)
+            case .some(let foundData):
+                updateThumbnail(at: index, state: .downloaded(foundData))
+            }
+        case .failure(_):
             updateThumbnail(at: index, state: .failed)
-        case .some(let data):
-            updateThumbnail(at: index, state: .downloaded(data))
         }
+//        switch data {
+//        case .none:
+//
+//        case .some(let data):
+//            )
+//        }
         switch contactListFilteringState {
         case .notFiltered(_):
             deactivateFiltering()

@@ -91,6 +91,8 @@ extension OneContactViewController: OneContactViewProtocol {
             self.present(controller, animated: true)
         case .smsComposingEnded(let controller):
             controller.dismiss(animated: true)
+        case .cancelled:
+            self.presenter?.requestImage()
         }
     }
 }

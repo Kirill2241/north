@@ -9,7 +9,7 @@ import Foundation
 protocol DownloadedContactsStorageProtocol {
     func setDataStorageIfEmpty(_ source: [ContactItem])
     func deactivateFiltering()
-    func updateThumbnailForContact(at index: Int, data: Data?)
+    func updateThumbnailForContact(at index: Int, imageDownloadingStatus: ImageDownloadingResult)
     func filterContactList(_ searchString: String)
     func getAContactDomainModelByID(id: String) -> ContactItem?
     func getAContactPresentationModelByIndex(index: Int) -> ContactPresentationModel?

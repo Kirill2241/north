@@ -45,14 +45,7 @@ extension ContactListPresenter: ContactListPresenterProtocol {
     func downloadThumbnailForContact(at index: Int) {
         guard let contact = contactsStorageService.getAContactPresentationModelByIndex(index: index) else { return }
         networkService.requestImage(urlString: contact.thumbnailString, type: .thumbnail){ result in
-            switch result {
-            case .success(let data):
-                self.contactsStorageService.updateThumbnailForContact(at: index, data: data)
-                return
-            case .failure(_):
-                self.contactsStorageService.updateThumbnailForContact(at: index, data: nil)
-                return
-            }
+            self.contactsStorageService.updateThumbnailForContact(at: index, imageDownloadingStatus: result)
         }
     }
     

@@ -54,9 +54,9 @@ enum OperationState: String {
 
 class ImageDownloadingOperation: AsyncOperation {
     private var imageURL: String
-    private var resultHandler: ((Result<Data, HTTPError>) -> Void)?
+    private var resultHandler: ((ImageDownloadingResult) -> Void)?
     
-    init(imageURLString: String, completion: @escaping(Result<Data, HTTPError>) -> Void) {
+    init(imageURLString: String, completion: @escaping(ImageDownloadingResult) -> Void) {
         self.imageURL = imageURLString
         resultHandler = completion
         super.init()
@@ -76,15 +76,21 @@ class ImageDownloadingOperation: AsyncOperation {
                 self.resultHandler?(.success(data))
             case .failure(let error):
                 self.resultHandler?(.failure(error))
+            case .isCancelled:
+                self.resultHandler?(.isCancelled)
             }
             self.finish()
         }
     }
     
-    private func loadImage(from text: String, completion: @escaping(Result<Data, HTTPError>) -> Void) {
+    private func loadImage(from text: String, completion: @escaping(ImageDownloadingResult) -> Void) {
         guard let photoUrl = URL(string: text) else { return }
         let request = URLRequest(url: photoUrl)
         URLSession.shared.dataTask(with: request){ data, response, error in
+            guard !self.isCancelled else {
+                completion(.isCancelled)
+                return
+            }
             if let error = error {
                 completion(.failure(HTTPError.transportError(error)))
                 return
@@ -101,4 +107,10 @@ class ImageDownloadingOperation: AsyncOperation {
             }
         }.resume()
     }
+}
+
+enum ImageDownloadingResult {
+    case isCancelled
+    case success(Data?)
+    case failure(HTTPError)
 }

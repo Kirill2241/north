@@ -20,6 +20,7 @@ extension OneContactViewController {
             case downloaded(Data?)
             case smsComposing(_ controller: MFMessageComposeViewController)
             case smsComposingEnded(_ controller: MFMessageComposeViewController)
+            case cancelled
         }
         let screenState: ScreenState
     }
